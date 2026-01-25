@@ -2,33 +2,23 @@ defmodule ForthIbE do
   @moduledoc """
   Documentation for `ForthIbE`.
   """
-  use GenServer
-  import ForthIbE.Compouser
+  @server ForthIbE.Server
 
   def start_link(_) do
 	IO.puts("Старт менеджера интерпретатора Forth_ibE")
 	GenServer.start_link(__MODULE__, nil, name: __MODULE__)
   end
 
-  @impl GenServer
-  def init(_) do
-	{:ok, dictionary} = ForthIbE.Dictionary.init()
-    {:ok, _lex_table, dictionary} = compouse(dictionary) # непонятно, зачем _lex_table?
-	stack = []
-	return_stack = []
-	state = {stack, return_stack, dictionary}
-	IO.inspect(self())
-	ForthIbE.CLI.start_link(state)
-	{:ok, state}
+  def execute(words) do
+    GenServer.call(@server, {:execute, words})
   end
 
-  def child_spec(opts) do
-    %{
-		id: __MODULE__,
-		start: {__MODULE__, :start_link, [nil]},
-		type: :worker,
-		restart: :permanent,
-		shutdown: 500
-  	}
+  def get_var(name) do
+    GenServer.call(@server, {:get_var, name})
   end
+
+  def add_var(name, value) do
+    GenServer.cast(@server, {:add_var, name, value})
+  end
+
 end

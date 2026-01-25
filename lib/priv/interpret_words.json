@@ -1,0 +1,13 @@
+{
+ ":": { "name": "create", "type": "intrp", "notation": "( -- )", "def":  "собирает все токены до ';' в определение нового слова"},
+"bye": { "name": "exit", "type": "intrp", "notation": "( -- )", "def": "возврат управления в базовую оболочку"},
+"quit": { "name": "quit", "type": "intrp", "notation": "( -- )", "def": "выполняет функцию QUIT, сохраняя стек данных"},
+"abort": { "name": "abort", "type": "intrp", "notation": "( i*x -- )( R:j*x -- )", "def": "освобождает стек данных и выполняет функцию QUIT"},
+"abort\"": { "name": "abort_msg", "type": "intrp", "notation": "( flag i*x -- )( R:j*x -- )", "def": "если флаг истинен, освобождает стек данных и выполняет функцию QUIT, выводит сообщение"},
+"variable":  {"name": "variable", "type": "intrp",  "notation": "( -- )", "def": "создаёт новую переменную из следующего токена"},
+"!":  {"name": "set_variable", "type": "intrp",  "notation": "(x name -- )", "def": "сохраняет значение в переменной"},
+"+!":  {"name": "inc_variable", "type": "intrp",  "notation": "(x name -- )", "def": "увеличивает переменную на данную величину"},
+"@":  {"name": "get_variable", "type": "intrp",  "notation": "(name -- x)", "def": "забирает значение переменной в стек"},
+"constant":  {"name": "constant", "type": "intrp",  "notation": "(x -- )", "def": "создаёт новую сонстанту с именем следующего токена со значением из стека"}
+}
+

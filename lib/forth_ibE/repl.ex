@@ -2,7 +2,7 @@ defmodule ForthIbE.REPL do
 
   use Task, restart: :transient
 
-  import ForthIbE.Interpreter 	#  
+  import ForthIbE.Interpreter 	# interpret
   import ForthIbE.Engin			# run
   import ForthIbE.Compouser		# compouse
   import ForthIbE.Tokenizer		# parse
@@ -10,7 +10,7 @@ defmodule ForthIbE.REPL do
   @doc """
   Starts the CLI and processes user commands.
   """
-  def start_link(_) do
+  def run() do
     loop(init(nil))
   end
 
@@ -19,7 +19,7 @@ defmodule ForthIbE.REPL do
     {:ok, _lex_table, dictionary} = compouse(dictionary) # непонятно, зачем _lex_table?
 	stack = []
 	return_stack = []
-	state = { stack, return_stack ,dictionary}
+	{ stack, return_stack, dictionary}
   end
 
   defp loop({data_stack, return_stack, dictionary}) do
@@ -47,7 +47,7 @@ defmodule ForthIbE.REPL do
 								    {[], [], dictionary}
 		    end
             loop(result)
-      catch error_type, error_value ->
+      catch _error_type, error_value ->
         #IO.puts("Type: #{inspect(error_type)}")
         #IO.puts("Value: #{inspect(error_value)}")
         case error_value do

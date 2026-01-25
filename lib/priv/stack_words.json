@@ -1,0 +1,14 @@
+{
+"depth": {"name": "depth", "type": "stack", "notation": "( -- x )", "def": "глубина стека"},
+"drop":  {"name": "drop", "type": "stack",  "notation": "( -- data)", "def": "удаление вершины стека"},
+"2drop": {"name": "drop2", "type": "stack",  "notation": "( data -- )", "def": "перемещение вершины стека данных  в стек возврата"},
+"dup":   {"name": "dup", "type": "stack",  "notation": "( -- data)", "def": "дублирование элемента на вершине стека"},
+"2dup":  {"name": "dup2", "type": "stack",  "notation": "( -- )", "def": "дублирование пары элементов на вершине стека"},
+"?dup":  {"name": "dup?", "type": "stack ",  "notation": "( n -- n n ) или ( 0 -- 0 )", "def": "дублирование элемента на вершине стека, если элемент истинен"},
+"swap": {"name": "swap", "type": "stack",  "notation": "(x y -- y x)", "def": "перестановка двух верхних элементов стека"},
+"2swap": {"name": "swap2", "type": "stack",  "notation": "(y2 x2 y1 x1 -- y1 x1 y2 x2)", "def": "перестановка двух верхних пар элементов стека"},
+"over": {"name": "over", "type": "stack",  "notation": "( y x -- y x y)", "def": "копирование второго элемента стека на вершину стека"},
+"2over": {"name": "over2", "type": "stack",  "notation": "( y2 x2 y1 x1 -- y2 x2 y1 x1 y2 x2 )", "def": "копирование второй пары  элементов стека на вершину стека"},
+"rot": {"name": "rot", "type": "stack",  "notation": "( x y z -- y z x)", "def": "перемещение треьего  элемента стека на вершину "}
+}
+

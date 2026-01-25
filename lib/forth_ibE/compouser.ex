@@ -19,11 +19,11 @@ defmodule ForthIbE.Compouser do
 		{:ok, content} -> 
 		  case JSON.decode(content) do # читаем таблицу слов
 			{:ok, acc} ->  acc
-		 	{:unexpected_end, offset} ->
+		 	{:unexpected_end, _offset} ->
 				IO.puts("binary содержит неполное значение JSON")
 			{:error, {:invalid_byte, offset, byte}} -> 
 				IO.puts("binary содержит неожиданный байт или недопустимый байт #{byte} в #{offset}")
-			{:unexpected_sequence, offset, bytes} ->
+			{:unexpected_sequence, _offset, bytes} ->
 				IO.puts("binary содержит недопустимый экранированный символ UTF-8 #{bytes}")
 		  end
 		{:error, reason} -> IO.puts("Failed to read file: #{reason}")

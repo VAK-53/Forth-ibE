@@ -36,8 +36,8 @@ defmodule ForthIbE.Dictionary do
     Map.put(dictionary, word_name, {:words, words})
   end
 
-  def add_var(dictionary, word_name, value \\ nil) do
-	#IO.puts("В Словаре")
+  def add_var(dictionary, word_name, value ) do
+	IO.puts("В Словаре")
     Map.put(dictionary, word_name, {:var, value})
   end
 
@@ -50,7 +50,7 @@ defmodule ForthIbE.Dictionary do
 
   def get_var(dictionary, word_name) do
 	case exist?(dictionary, word_name) do
-      true	-> 	{:var, value} = Map.get(dictionary, word_name ) # ? {:var, :unknown}
+      true	-> 	{:var, value} = Map.get(dictionary, word_name ) 
     			value
 	  false -> :error
 	end

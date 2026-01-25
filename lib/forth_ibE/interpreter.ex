@@ -30,7 +30,7 @@ defmodule ForthIbE.Interpreter do
 	#IO.inspect(	content )
 	case interpret(content,  dictionary) do# конвертирование binary в атомы прямо в определении
 	  {:error, reason } -> { :error, "Определение не выполнено: " <> reason }
-	  {atom_content, _dict} -> 	dict = Dictionary.add_word(dictionary, word_name, atom_content)													
+	  {atom_content, _dict} -> 	dict = add_word(dictionary, word_name, atom_content)													
 	  							_interpret(behind_tokens, dict)	# тут возвращаем только 2 параметра ?!
 	end
   end
