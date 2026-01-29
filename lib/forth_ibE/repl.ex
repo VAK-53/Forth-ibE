@@ -40,6 +40,7 @@ defmodule ForthIbE.REPL do
 		end	
 		# выполнение вирт-кода
       try do 
+            # IO.inspect(virt_code)
 		    result = case run(virt_code, data_stack, return_stack, dictionary) do
 		      {:ok, data_stack, return_stack, dictionary} ->	IO.write(" ok\n")
 															    {data_stack, return_stack, dictionary}

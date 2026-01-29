@@ -369,7 +369,7 @@ defmodule ForthIbE.Words do
   end
 
   def dump_data_stack(virt_code, data_stack, return_stack, dictionary ) do
-	IO.puts("dump_data_stack")
+	#IO.puts("dump_data_stack")
 	length = length(data_stack)
 	IO.write("<#{length}> ")
     data_stack
@@ -464,25 +464,24 @@ defmodule ForthIbE.Words do
   end
 
   def begin(virt_code, data_stack, return_stack, dictionary) do
-    {
-	  virt_code, data_stack, [%{begin: virt_code} | return_stack], dictionary
-	}
+      IO.inspect(virt_code)
+    { virt_code, data_stack, [%{begin: virt_code} | return_stack], dictionary  }
   end
 
   def until(virt_code,  [condition | data_stack], [%{begin: until_virt_code} | return_stack],
         dictionary ) do
-	IO.inspect(virt_code)
-	IO.inspect(until_virt_code)
+    # IO.puts(condition)
+	# IO.inspect(virt_code)
 
     case is_falsely(condition) do
-      true ->
+      true -> #IO.inspect(until_virt_code)
         {
           until_virt_code,
           data_stack,
           [%{begin: until_virt_code} | return_stack],
           dictionary
         }
-      false ->
+      false -> #IO.inspect(virt_code)
         {
 		  virt_code,
 		  data_stack,
@@ -490,6 +489,52 @@ defmodule ForthIbE.Words do
 		  dictionary
 		}
     end
+  end
+
+  def while(virt_code,  [condition | data_stack], [%{begin: while_virt_code} | return_stack],
+        dictionary ) do
+    IO.puts(condition)
+    #IO.inspect(virt_code)
+
+    case is_falsely(condition) do
+      false -> IO.inspect(while_virt_code)
+        {
+          virt_code,
+          data_stack,
+          [%{begin: while_virt_code} | return_stack],
+          dictionary
+        }
+      true -> 
+        {_virt_code, [:repeat | behind_virt_code]} = Enum.split_while(virt_code, fn s -> s != :repeat end)
+        IO.inspect(while_virt_code)
+        {
+		  behind_virt_code,
+		  data_stack,
+		  return_stack,
+		  dictionary
+		}
+    end
+  end
+
+  def repeat(virt_code,  data_stack, [%{begin: repeat_virt_code} | return_stack],
+        dictionary ) do
+    IO.puts("repeat")
+    IO.inspect(virt_code)
+
+    {
+      repeat_virt_code,
+      data_stack,
+      [%{begin: repeat_virt_code} | return_stack],
+      dictionary
+    }
+  end
+
+
+  def delay(virt_code, [delay | data_stack], return_stack, dictionary) do
+
+    :timer.sleep(delay)
+
+    { virt_code, data_stack, return_stack, dictionary }
   end
 
   # ---------------------------------------------
