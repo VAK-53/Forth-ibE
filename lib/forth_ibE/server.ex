@@ -10,9 +10,10 @@ defmodule ForthIbE.Server do
   import ForthIbE.Dictionary
 
 
-  def start_link(_) do
+  def start_link(name) do
 	IO.puts("Старт сервера интерпретатора Forth_ibE")
-	GenServer.start_link(__MODULE__, nil, name: __MODULE__)
+    #eng_name = String.to_atom(name)
+	GenServer.start_link(__MODULE__, nil, name: name)
   end
 
   @impl GenServer

@@ -17,7 +17,7 @@ defmodule IbForth.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {ForthIbE.Application, []}
+      mod: {ForthIbE.Application, :engine}
     ]
   end
 

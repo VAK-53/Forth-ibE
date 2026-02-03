@@ -596,5 +596,35 @@ defmodule ForthIbE.Words do
   def rot_neg(virt_code, [z, y, x | data_stack], return_stack, dictionary) do
     {virt_code, [y, x, z | data_stack], return_stack, dictionary}
   end
+
+  # ---------------------------------------------
+  # Date & time operations
+  # ---------------------------------------------
+  def time_and_date(virt_code, data_stack, return_stack, dictionary) do
+    naive_datetime = NaiveDateTime.local_now()
+    year    = naive_datetime.year
+    month   = naive_datetime.month
+    day     = naive_datetime.day
+    hour    = naive_datetime.hour
+    minute  = naive_datetime.minute
+    second  = naive_datetime.second
+    #IO.puts(second)
+    {virt_code, [ second, minute, hour, day, month, year | data_stack], return_stack, dictionary}
+  end
+   
+  def timestamp(virt_code, data_stack, return_stack, dictionary) do
+    naive_datetime = NaiveDateTime.local_now()
+    {virt_code, [ naive_datetime | data_stack], return_stack, dictionary}
+  end
+
+  def ts_to_unix( virt_code, [timestamp | data_stack], return_stack, dictionary) do
+    {:ok, dt} = DateTime.from_naive(timestamp,"Etc/UTC")
+    {virt_code, [ DateTime.to_unix(dt, :millisecond) | data_stack], return_stack, dictionary}
+  end
+
+  def ts_from_unix( virt_code, [seconds | data_stack], return_stack, dictionary) do
+    {:ok, timestamp} = DateTime.from_unix(seconds, :millisecond)
+    {virt_code, [ timestamp | data_stack], return_stack, dictionary}
+  end
 end
 
