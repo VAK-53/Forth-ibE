@@ -1,0 +1,5 @@
+{
+"to-atom": {"name": "to_atom", "type": "exec", "arity": 1, "notation": "( x   --  a )",  "def": "преобразует строку в атом"}
+}
+
+

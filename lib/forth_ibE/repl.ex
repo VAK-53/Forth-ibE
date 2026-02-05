@@ -19,10 +19,11 @@ defmodule ForthIbE.REPL do
     {:ok, _lex_table, dictionary} = compouse(dictionary) # непонятно, зачем _lex_table?
 	stack = []
 	return_stack = []
-	{ stack, return_stack, dictionary}
+    recipients = self()
+	{ stack, return_stack, dictionary, recipients}
   end
 
-  defp loop({data_stack, return_stack, dictionary}) do
+  defp loop({data_stack, return_stack, dictionary, recipients}) do
     in_string = IO.gets(" Words $ ") 
     tokens = parse(String.trim(in_string))
 
@@ -33,19 +34,19 @@ defmodule ForthIbE.REPL do
 											  loop {[], [], dictionary}
 						  {virt_code, dictionary} -> 
 										case virt_code do
-										  []		->	loop({data_stack, return_stack, dictionary})
+										  []		->	loop({data_stack, return_stack, dictionary, recipients})
 										  #[:exit]	->	:exit
-										  _			->	{virt_code, dictionary}	
+										  _			->	{virt_code, dictionary, recipients}	
 										end			  
 		end	
 		# выполнение вирт-кода
       try do 
             # IO.inspect(virt_code)
-		    result = case run(virt_code, data_stack, return_stack, dictionary) do
-		      {:ok, data_stack, return_stack, dictionary} ->	IO.write(" ok\n")
-															    {data_stack, return_stack, dictionary}
+		    result = case run(virt_code, data_stack, return_stack, dictionary, recipients) do
+		      {:ok, data_stack, return_stack, dictionary, recipients} ->	IO.write(" ok\n")
+															    {data_stack, return_stack, dictionary, recipients}
 		      {:error, reason} ->	IO.puts(reason)
-								    {[], [], dictionary}
+								    {[], [], dictionary, recipients}
 		    end
             loop(result)
       catch _error_type, error_value ->

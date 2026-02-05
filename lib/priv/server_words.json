@@ -1,0 +1,5 @@
+{
+"forward": {"name": "forward", "type": "exec", "arity": 3, "notation": "( steck   -- )",  "def": "пересылает содержимое стека"}
+}
+
+

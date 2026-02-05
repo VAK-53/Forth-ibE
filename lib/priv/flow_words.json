@@ -10,7 +10,6 @@
 "begin": {"name": "begin", "type": "flow",  "notation": "( -- )", "def": "начало объявления цикла"},
 "until": {"name": "until", "type": "flow",  "notation": "( bool -- )", "def": "продолжение цикла пока условие истинно"},
 "while": {"name": "while", "type": "flow",  "notation": "( bool -- )", "def": "продолжение цикла пока условие ложно"},
-"repeat": {"name": "repeat", "type": "flow",  "notation": "( -- )", "def": "окончание цикла"},
-"delay": {"name": "delay", "type": "flow",  "notation": "( t -- )", "def": "задержка времени"}
+"repeat": {"name": "repeat", "type": "flow",  "notation": "( -- )", "def": "окончание цикла"}
 }
 

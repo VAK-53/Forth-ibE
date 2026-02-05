@@ -37,7 +37,7 @@ defmodule ForthIbE.Dictionary do
   end
 
   def add_var(dictionary, word_name, value ) do
-	IO.puts("В Словаре")
+	#IO.puts("В Словаре")
     Map.put(dictionary, word_name, {:var, value})
   end
 

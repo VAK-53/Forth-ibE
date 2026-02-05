@@ -3,6 +3,7 @@ defmodule ForthIbE.Server do
   Documentation for `ForthIbE`.
   """
   use GenServer
+
   import ForthIbE.Compouser
   import ForthIbE.Interpreter
   import ForthIbE.Engin			# run
@@ -10,19 +11,16 @@ defmodule ForthIbE.Server do
   import ForthIbE.Dictionary
 
 
-  def start_link(name) do
-	IO.puts("Старт сервера интерпретатора Forth_ibE")
-    #eng_name = String.to_atom(name)
-	GenServer.start_link(__MODULE__, nil, name: name)
-  end
 
   @impl GenServer
-  def init(_) do
+  def init({engine_name, recipients}) do
 	{:ok, dictionary} = ForthIbE.Dictionary.init()
     {:ok, _lex_table, dictionary} = compouse(dictionary) # непонятно, зачем _lex_table?
 	stack = []
 	return_stack = []
-	state = {stack, return_stack, dictionary}
+    atom_name = String.to_atom(engine_name)
+    Process.register(self(), atom_name)    
+	state = {stack, return_stack, dictionary, recipients}
 	{:ok, state}
   end
 

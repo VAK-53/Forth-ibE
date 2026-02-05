@@ -4,9 +4,9 @@ defmodule ForthIbE do
   """
   @server ForthIbE.Server
 
-  def start_link(_) do
+  def start_link(params) do
 	IO.puts("Старт менеджера интерпретатора Forth_ibE")
-	GenServer.start_link(__MODULE__, nil, name: __MODULE__)
+	GenServer.start_link(@server, params)
   end
 
   def execute(words) do
