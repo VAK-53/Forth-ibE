@@ -4,21 +4,21 @@ defmodule ForthIbE do
   """
   @server ForthIbE.Server
 
-  def start_link(params) do
+  def start(params) do
 	IO.puts("Старт менеджера интерпретатора Forth_ibE")
 	GenServer.start_link(@server, params)
   end
 
-  def execute(words) do
-    GenServer.call(@server, {:execute, words})
+  def execute(eng_name, words) do
+    GenServer.call(eng_name, {:execute, words})
   end
 
-  def get_var(name) do
-    GenServer.call(@server, {:get_var, name})
+  def get_var(eng_name, var_name) do
+    GenServer.call(eng_name, {:get_var, var_name})
   end
 
-  def add_var(name, value) do
-    GenServer.cast(@server, {:add_var, name, value})
+  def add_var(eng_name, var_name, value) do
+    GenServer.cast(eng_name, {:add_var, var_name, value})
   end
 
 end
