@@ -10,7 +10,7 @@ defmodule ForthIbE do
   end
 
   def execute(eng_name, words) do
-    GenServer.call(eng_name, {:execute, words})
+    GenServer.cast(eng_name, {:execute, words})
   end
 
   def get_var(eng_name, var_name) do

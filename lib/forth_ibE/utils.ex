@@ -5,6 +5,9 @@ defmodule ForthIbE.Utils do
   # утилиты
   #-----------
 
+  defguard is_falsely(value) when value == false or value == nil or value == 0 or value == ""
+  defguard is_truthly(value) when not is_falsely(value)
+
   def atomization(tokens_list) do
 	Enum.reverse(_atomization(tokens_list))
   end

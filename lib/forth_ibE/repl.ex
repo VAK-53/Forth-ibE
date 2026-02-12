@@ -3,7 +3,7 @@ defmodule ForthIbE.REPL do
   use Task, restart: :transient
 
   import ForthIbE.Interpreter 	# interpret
-  import ForthIbE.Engin			# run
+  import ForthIbE.Engin			# evaluate
   import ForthIbE.Compouser		# compouse
   import ForthIbE.Tokenizer		# parse
 
@@ -14,64 +14,63 @@ defmodule ForthIbE.REPL do
     loop(init(nil))
   end
 
-  def init(_) do
-	{:ok, dictionary} = ForthIbE.Dictionary.init()
-    {:ok, _lex_table, dictionary} = compouse(dictionary) # непонятно, зачем _lex_table?
-	stack = []
+  def init(dict) do
+    dictionary = if dict == nil do 
+      {:ok, dictionary} = ForthIbE.Dictionary.init()
+      dictionary
+    else
+      dict
+    end
+	{:ok, table} = ForthIbE.Table.init()
+    {:ok, table} = compouse(table) # убрал _lex_table за ненадобностью
+	data_stack = []
 	return_stack = []
-    recipients = self()
-	{ stack, return_stack, dictionary, recipients}
+    recipients  = []
+	{data_stack, return_stack, dictionary, table, recipients}
   end
 
-  defp loop({data_stack, return_stack, dictionary, recipients}) do
-    in_string = IO.gets(" Words $ ") 
-    tokens = parse(String.trim(in_string))
+  defp loop(state) do
+    {data_stack, return_stack, dictionary, table, recipients} = state
+    input = IO.gets(" Words $ ") 
+	#IO.inspect(input)
+    tokens = parse(String.trim(input))
 
 	#IO.inspect(tokens)
-	derivation = interpret(tokens, dictionary)
-	{virt_code, dictionary} = case derivation do 
+	{virt_code, dictionary} = case interpret(tokens, dictionary, table) do  # в dictionary помещаются определения! variable тоже?
 						  {:error, reason} -> IO.puts(reason)
-											  loop {[], [], dictionary}
+                                              state = {[], [], dictionary, table, recipients}
+											  loop(state)
 						  {virt_code, dictionary} -> 
 										case virt_code do
-										  []		->	loop({data_stack, return_stack, dictionary, recipients})
-										  #[:exit]	->	:exit
-										  _			->	{virt_code, dictionary, recipients}	
+										  []		->	state = {data_stack, return_stack, dictionary, table, recipients}
+                                                        loop(state)
+										  _			->	{virt_code, dictionary}	
 										end			  
 		end	
 		# выполнение вирт-кода
-      try do 
-            # IO.inspect(virt_code)
-		    result = case run(virt_code, data_stack, return_stack, dictionary, recipients) do
-		      {:ok, data_stack, return_stack, dictionary, recipients} ->	IO.write(" ok\n")
-															    {data_stack, return_stack, dictionary, recipients}
-		      {:error, reason} ->	IO.puts(reason)
-								    {[], [], dictionary, recipients}
+        try do 
+            #IO.inspect(virt_code)
+            #IO.inspect(dictionary)
+            #IO.gets(" Пауза $ ")
+		    {data_stack, return_stack, dictionary} = case evaluate(virt_code, data_stack, return_stack, dictionary, table, recipients) do
+		      {:ok, data_stack, return_stack, dictionary}   ->  IO.write(" ok\n")
+															    { data_stack, return_stack, dictionary}
+		      {:error, reason}                              ->	IO.puts(reason)
+								                                {[], [], dictionary}
 		    end
-            loop(result)
-      catch _error_type, error_value ->
-        #IO.puts("Type: #{inspect(error_type)}")
-        #IO.puts("Value: #{inspect(error_value)}")
-        case error_value do
-          :normal -> IO.puts("Выходим")
-                     System.halt(0)
-          _ ->
-            IO.puts("Ошибка:")
-            IO.puts("\tКод: #{inspect(virt_code)}")
-            IO.puts("\tСтек: #{inspect(data_stack)}")
-            IO.puts("\tСтек возврата: #{inspect(return_stack)}")
-            loop(init(nil))
-        end
-      end
-  end
+            state = {data_stack, return_stack, dictionary, table, recipients}
+            loop(state)
+        catch error_type, error_value ->
+                IO.puts("Type: #{inspect(error_type)}")
+                IO.puts("Value: #{inspect(error_value)}")
+                case error_value do
+                  :normal -> IO.puts("Выходим")
+                             System.halt(0)
 
-  def child_spec(opts) do
-    %{
-        id: __MODULE__,
-        start: {__MODULE__, :start_link, [opts]},
-        type: :worker,
-        restart: :transient,
-        shutdown: 500
-    }
+                  _ ->      IO.puts("Ошибка:")
+                            IO.puts("\tКод: #{inspect(virt_code)}")
+                            loop(init(dictionary))
+                end
+        end
   end
 end

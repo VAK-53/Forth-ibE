@@ -8,11 +8,11 @@ defmodule ForthIbE.Compouser do
   def storage_dir(), do: @root_dir <> "/lib/priv"
   def words_dir(), do: @root_dir <> "/lib"
 
-  def compouse(dictionary) do #
+  def compouse(table) do #
 	# IO.puts(@root_dir)
  	file_names = [ "math_words.json", "io_words.json", "interpret_words.json", "flow_words.json", 
-					"stack_words.json", "logic_words.json", "time_words.json", "server_words.json",
-                    "elixir_words.json"] # 
+				 "logic_words.json",	"stack_words.json"] # "time_words.json", "server_words.json",
+                 #   "elixir_words.json"] # 
     bootstrap_table = for file_name <- file_names do
 	  full_name = Path.join(storage_dir(), file_name)
 
@@ -43,8 +43,9 @@ defmodule ForthIbE.Compouser do
 	fun_check(lex_table)	
  
 	# заполняем словарь стандартными words
-	new_dictionary=fill_dictionary(lex_table, dictionary)
-	{:ok, lex_table, new_dictionary}
+	new_table = fill_table(lex_table, table)
+    # IO.inspect(new_table)
+	{:ok, new_table}
  end
 
   defp fun_check(lex_table) do
@@ -60,13 +61,13 @@ defmodule ForthIbE.Compouser do
   end
 
 
-  defp fill_dictionary(table, dictionary) do
-	new_dictionary = Enum.reduce(table, %{},
-		fn elem, dictionary -> attrs = elem(elem,1)
+  defp fill_table(lex_table, table) do
+	new_table = Enum.reduce(lex_table, %{},
+		fn elem, table -> attrs = elem(elem,1)
 							   key = elem(elem,0)
 							   name = Map.get(attrs, "name")
-							   Map.put(dictionary,  key, {:in_built, String.to_atom(name)})
+							   Map.put(table,  key, String.to_atom(name))
 		end )
-	Map.merge(dictionary, new_dictionary)
+	Map.merge(table, new_table)
   end
 end

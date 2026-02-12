@@ -2,6 +2,7 @@ defmodule ForthIbE.Words do
   @moduledoc """
   Встроенные функции поддержки слов
   """
+  #import ForthIbE.Table # ? надо проверить ее необходимость здесь
   import ForthIbE.Dictionary
   import ForthIbE.Utils
 
@@ -17,10 +18,12 @@ defmodule ForthIbE.Words do
   end
 
   def mult(virt_code, [y, x | data_stack], return_stack, dictionary, recipients) do
+    #IO.puts("in mult")
     {virt_code, [x * y | data_stack], return_stack, dictionary, recipients}
   end
 
   def div(virt_code, [y, x | data_stack], return_stack, dictionary, recipients) do
+    #IO.inspect(virt_code)
 	case y do
 	  0 -> 	{:error, " ошибочное деление на 0"}
       _ -> 	{virt_code, [x / y | data_stack], return_stack, dictionary, recipients}
@@ -28,6 +31,7 @@ defmodule ForthIbE.Words do
   end
 
   def mod(virt_code, [y, x | data_stack], return_stack, dictionary, recipients) do
+    #IO.write("#{y} #{x}")
     {virt_code, [ rem(x, y) | data_stack], return_stack, dictionary, recipients}
   end
 
@@ -106,8 +110,8 @@ defmodule ForthIbE.Words do
   @c_true -1 #true
   @c_false 0 #false
 
-  defguard is_falsely(value) when value == false or value == nil or value == 0 or value == ""
-  defguard is_truthly(value) when not is_falsely(value)
+  #defguard is_falsely(value) when value == false or value == nil or value == 0 or value == ""
+  #defguard is_truthly(value) when not is_falsely(value)
 
   def eq(virt_code, [y, x | data_stack], return_stack, dictionary, recipients) do	# равенство двух элементов
 	result = case x == y do
@@ -213,8 +217,8 @@ defmodule ForthIbE.Words do
 	double_x = is_truthly(x)
 	double_y = is_truthly(y)
     b = !double_x && double_y || double_x && !double_y
-	IO.puts("b")
-	IO.inspect(b)
+	#IO.puts("b")
+	#IO.inspect(b)
     {virt_code, [b | data_stack], return_stack, dictionary, recipients}
   end
 
@@ -224,7 +228,6 @@ defmodule ForthIbE.Words do
       else
         @c_true
       end
-
     {virt_code, [b | data_stack], return_stack, dictionary, recipients}
   end
 
@@ -249,16 +252,16 @@ defmodule ForthIbE.Words do
   end
 
 #-------------------
-#  word of interpret
+#  word of interprete
 #-------------------
   def create([word_name | tokens], data_stack, return_stack, dictionary, recipients) do
     # Задание: интерпретировать  немедленно
-    if Map.has_key?(dictionary, word_name) do
+    if Map.has_key?(dictionary,  word_name) do
       IO.write("переопределяется '#{word_name}'")
     end
     {word_tokens, [";" | tokens]} = Enum.split_while(tokens, fn s -> s != ";" end) 
 
- 	{ tokens, data_stack, return_stack, add_word(dictionary, word_name, word_tokens), recipients}
+ 	{ tokens, data_stack, return_stack, add_word(dictionary,word_name, word_tokens), recipients}
   end
 
   def exit(_virt_code, data_stack, return_stack, dictionary, recipients) do
@@ -280,17 +283,23 @@ defmodule ForthIbE.Words do
   end
 
   def variable([word_name | tail], data_stack, return_stack, dictionary, recipients) do	# работает во время исполнения
+    #IO.puts(word_name)
+    #IO.inspect(dictionary)
     if Map.has_key?(dictionary, word_name) do
       IO.write("переопределяется '#{word_name}'")
     end
-    dictionary = add_var(dictionary, word_name, :unknown)
-    {tail, data_stack, return_stack, dictionary, recipients} 
+    dict = add_var(dictionary, word_name, :unknown)
+    #IO.inspect(dict)
+    {tail, data_stack, return_stack, dict, recipients} 
   end
 
-  def set_variable(virt_code, [ word_name, x | data_stack], return_stack, dictionary, recipients) do !!! 
-	case set_var(dictionary, word_name, x) do
-	  :error -> {:error, "в словаре отсутствует объявленная переменная #{word_name} "}
-	  dict	->  {virt_code, data_stack, return_stack, dict, recipients}
+  def set_variable(virt_code, [ var_name, x | data_stack], return_stack, dictionary, recipients) do 
+    #IO.puts(var_name)
+	case set_var(dictionary, var_name, x) do
+	  :error -> {:error, "в словаре отсутствует объявленная переменная #{var_name} "}
+	  dict	->  # IO.puts("установили переменную")
+                IO.inspect(dict)
+                {virt_code, data_stack, return_stack, dict, recipients}
 	end
   end
 
@@ -304,10 +313,11 @@ defmodule ForthIbE.Words do
 	end
   end
 
-  def get_variable(virt_code, [word_name | data_stack], return_stack, dictionary, recipients) do
+  def get_variable(virt_code, [word_name | data_stack], return_stack, dictionary, recipients) do # перенёс на этап интерпретации
 	case get_var(dictionary, word_name) do
 	  :error -> {:error, "в словаре отсутствует объявленная переменная #{word_name} "}
-	  value	->  {virt_code, [value | data_stack], return_stack, dictionary, recipients}
+	  value	->  #IO.puts(value)
+                {virt_code, [value | data_stack], return_stack, dictionary, recipients}
 	end   
   end
 
@@ -342,7 +352,7 @@ defmodule ForthIbE.Words do
 
   def dot(virt_code, data_stack, return_stack, dictionary, recipients) do
 	data_stack = case data_stack do
-	  [] -> IO.write("стек пуст ")  # !!! веревести в картеж 
+	  [] -> IO.write("стек пуст ")  # !!! перевести в кортеж 
 			[]	
 	  _  -> [x | tail] = data_stack
     		IO.write("#{x} ")
@@ -375,6 +385,17 @@ defmodule ForthIbE.Words do
     data_stack
     |> Enum.reverse()
     |> Enum.each(fn x -> IO.write("#{x} ") end)
+
+    {virt_code, data_stack, return_stack, dictionary, recipients}
+  end
+
+  def dictionary(virt_code, data_stack, return_stack, dictionary, recipients) do
+	IO.puts("dump_dictionary")
+	length = map_size(dictionary)
+	IO.puts("<#{length}> ")
+    dictionary
+    |> Enum.each(fn {k,v} ->    IO.write(k <> " => ")
+                                IO.inspect(v) end)
 
     {virt_code, data_stack, return_stack, dictionary, recipients}
   end
@@ -445,8 +466,7 @@ defmodule ForthIbE.Words do
     case count < end_count do
       true	->	{ do_tokens, data_stack, [count, end_count, %{do: do_tokens} | return_stack],
           dictionary, recipients}
-      false ->	{ virt_code, data_stack, return_stack, dictionary, recipients
-		}
+      false ->	{ virt_code, data_stack, return_stack, dictionary, recipients }
     end
   end
 
@@ -464,7 +484,7 @@ defmodule ForthIbE.Words do
   end
 
   def begin(virt_code, data_stack, return_stack, dictionary, recipients) do
-      IO.inspect(virt_code)
+      #IO.inspect(virt_code)
     { virt_code, data_stack, [%{begin: virt_code} | return_stack], dictionary, recipients  }
   end
 
@@ -478,26 +498,24 @@ defmodule ForthIbE.Words do
         {
           until_virt_code,
           data_stack,
-          [%{begin: until_virt_code} | return_stack],
-          dictionary, recipients
+          [%{begin: until_virt_code} | return_stack], dictionary, recipients
         }
       false -> #IO.inspect(virt_code)
         {
 		  virt_code,
 		  data_stack,
-		  return_stack,
-		  dictionary, recipients
+		  return_stack, dictionary, recipients
 		}
     end
   end
 
   def while(virt_code,  [condition | data_stack], [%{begin: while_virt_code} | return_stack],
         dictionary, recipients) do
-    IO.puts(condition)
+    #IO.puts(condition)
     #IO.inspect(virt_code)
 
     case is_falsely(condition) do
-      false -> IO.inspect(while_virt_code)
+      false -> #IO.inspect(while_virt_code)
         {
           virt_code,
           data_stack,
@@ -506,25 +524,21 @@ defmodule ForthIbE.Words do
         }
       true -> 
         {_virt_code, [:repeat | behind_virt_code]} = Enum.split_while(virt_code, fn s -> s != :repeat end)
-        IO.inspect(while_virt_code)
+        #IO.inspect(while_virt_code)
         {
-		  behind_virt_code,
-		  data_stack,
-		  return_stack,
+		  behind_virt_code, data_stack, return_stack,
 		  dictionary, recipients
 		}
     end
   end
 
-  def repeat(virt_code,  data_stack, [%{begin: repeat_virt_code} | return_stack],
+  def repeat(_virt_code,  data_stack, [%{begin: repeat_virt_code} | return_stack],
         dictionary, recipients) do
-    IO.puts("repeat")
-    IO.inspect(virt_code)
+    #IO.puts("repeat")
+    #IO.inspect(virt_code)
 
     {
-      repeat_virt_code,
-      data_stack,
-      [%{begin: repeat_virt_code} | return_stack],
+      repeat_virt_code, data_stack, [%{begin: repeat_virt_code} | return_stack],
       dictionary, recipients
     }
   end
@@ -617,8 +631,9 @@ defmodule ForthIbE.Words do
     {virt_code, [ naive_datetime | data_stack], return_stack, dictionary, recipients}
   end
 
-  def ts_to_unix( virt_code, [timestamp | data_stack], return_stack, dictionary, recipients) do
-    {:ok, dt} = DateTime.from_naive(timestamp,"Etc/UTC")
+  def ts_to_unix( virt_code, [ text_timestamp | data_stack], return_stack, dictionary, recipients) do
+    ts = NaiveDateTime.from_iso8601!(text_timestamp)
+    {:ok, dt} = DateTime.from_naive(ts,"Etc/UTC")
     {virt_code, [ DateTime.to_unix(dt, :millisecond) | data_stack], return_stack, dictionary, recipients}
   end
 
