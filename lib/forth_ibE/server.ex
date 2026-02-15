@@ -19,40 +19,40 @@ defmodule ForthIbE.Server do
     {:ok, dictionary} = ForthIbE.Dictionary.init()
     atom_name    = String.to_atom(name)
     Process.register(self(), atom_name)
-	state = {stack, return_stack, table, dictionary, recipients}
+	state = {stack, return_stack, dictionary, table, recipients}
 	{:ok, state}
   end
 
   @impl true
-  def handle_call({:get_var, name},  _from,  {stack, return_stack, table, dictionary, recipients} = _state) do
+  def handle_call({:get_var, name}, _from,  {stack, return_stack, dictionary, table, recipients} = _state) do
     result = get_var(dictionary, name)
     case result do
       :error -> {:reply, {:error, "не существует"}, {stack, return_stack, dictionary, recipients}}
-      value -> {:reply, {:ok, value}, {stack, return_stack, table, dictionary, recipients}}
+      value -> {:reply, {:ok, value}, {stack, return_stack, dictionary, table, recipients}}
     end
   end
 
   @impl true
-  def handle_cast({:execute, words}, {_stack, _return_stack, table, dictionary, recipients} = state) do
+  def handle_cast({:execute, words}, {_stack, _return_stack, dictionary, table, recipients} = state) do
     result = words |> eval(state)
     case result do
-      {:ok, stack, return_stack, dictionary } -> {:noreply, {stack, return_stack, dictionary, recipients}}
-      {:error, _reason} -> {:noreply, {[], [], table, dictionary, recipients}} # добавить журналирование
+      {:ok, stack, return_stack, dictionary } -> {:noreply, {stack, return_stack, dictionary, table, recipients}}
+      {:error, _reason} -> {:noreply, {[], [], dictionary, table, recipients}} # добавить журналирование
     end
   end
 
   @impl true
-  def handle_cast({:add_var, name, value},  {stack, return_stack, table, dictionary, recipients}) do
+  def handle_cast({:add_var, name, value},  {stack, return_stack, dictionary, table,  recipients}) do
     dictionary = add_var(dictionary, name, value)
-    {:noreply, {stack, return_stack, table, dictionary, recipients}}
+    {:noreply, {stack, return_stack, dictionary, table, recipients}}
   end
 
   # _________________implementation ___________________
 
   defp eval(words, state) do
-    {stack, return_stack, table, dictionary, recipients} = state
-    {virt_code, dictionary} = words |> parse |> interpret(table, dictionary) 
-    evaluate(virt_code, stack, return_stack, table, dictionary, recipients)
+    {stack, return_stack, dictionary, table, recipients} = state
+    {virt_code, dictionary} = words |> parse |> interpret(dictionary, table) 
+    evaluate(virt_code, stack, return_stack, dictionary, table,  recipients)
   end
 
 end

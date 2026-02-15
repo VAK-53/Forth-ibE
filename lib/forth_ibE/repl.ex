@@ -22,10 +22,10 @@ defmodule ForthIbE.REPL do
       dict
     end
 	{:ok, table} = ForthIbE.Table.init()
-    {:ok, table} = compouse(table) # убрал _lex_table за ненадобностью
+    {:ok, table} = compouse(table)
 	data_stack = []
 	return_stack = []
-    recipients  = []
+    recipients  = [self()]
 	{data_stack, return_stack, dictionary, table, recipients}
   end
 

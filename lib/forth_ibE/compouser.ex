@@ -11,8 +11,8 @@ defmodule ForthIbE.Compouser do
   def compouse(table) do #
 	# IO.puts(@root_dir)
  	file_names = [ "math_words.json", "io_words.json", "interpret_words.json", "flow_words.json", 
-				 "logic_words.json",	"stack_words.json"] # "time_words.json", "server_words.json",
-                 #   "elixir_words.json"] # 
+				 "logic_words.json",	"stack_words.json", "time_words.json", "server_words.json",
+                 "elixir_words.json"] # 
     bootstrap_table = for file_name <- file_names do
 	  full_name = Path.join(storage_dir(), file_name)
 

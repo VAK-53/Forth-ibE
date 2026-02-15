@@ -1,8 +1,9 @@
 {
 "time&date": {"name": "time_and_date", "type": "exec", "arity": 0, "notation": "(   -- +n1 +n2 +n3 +n4 +n5 +n6)",  "def": "возвращает текущее время и дату"},
 "timestamp": {"name": "timestamp", "type": "exec", "arity": 1, "ar_type": "timestamp", "notation": "( ts  -- +n1 +n2 +n3 +n4 +n5 +n6)",  "def": "размещает timestamp в стеке"},
+"to-timestamp": {"name": "to_timestamp", "type": "exec", "arity": 1, "ar_type": "timestamp", "notation": "( ph  -- ts)",  "def": "преобразует симфольную строку в timestamp"},
 "ts-to-unix":  {"name": "ts_to_unix", "type": "exec", "arity": 1, "ar_type": "string", "notation": "( x -- n )",  "def": "преобразование временной метки в timestamp"},
-"ts-from-unix": {"name": "ts_from_unix", "type": "exec", "arity": 1, "ar_type": "number", "notation": "( x -- s )",  "def": "преобразование timestamp во временную метку"},
+"ts-from-unix": {"name": "ts_from_unix", "type": "exec", "arity": 1, "ar_type": "number", "notation": "( x -- ts )",  "def": "преобразование timestamp во временную метку"},
 "MS": {"name": "delay", "type": "flow",  "notation": "( t -- )", "def": "задержка времени"},
 "delay": {"name": "delay", "type": "flow",  "notation": "( t -- )", "def": "задержка времени"}
 }

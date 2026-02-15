@@ -58,6 +58,7 @@ defmodule ForthIbE.Tokenizer do
 		end
 
       :quote -> 
+        IO.inspect(previous)
 		case target do
 		  :phrase   ->	new_tokens = save_previous(tokens, target, previous) # закрываем
 				        previous = [] 
@@ -69,15 +70,16 @@ defmodule ForthIbE.Tokenizer do
 				      	_parse(tail, tokens, :word, previous, errs) 
 		  nil	    ->	# случай открывающей или закрывающей кавычки после :space 
                         case tail do
-                          [] ->     previous = [ c ]
+                          []    ->  previous = [ c ]
                                     target = :end_quote
                                     _parse([], tokens, target, previous, errs)
-                          _  ->     [following_c | _new_tail] = tail     # забегаем вперед на один символ
+                          _     ->  [following_c | _new_tail] = tail     # забегаем вперед на один символ
                                     case get_char(following_c) do
                                       :space -> # это конец
                                                 previous = [ c ]
 					                         	_parse(tail, tokens, :end_quote, previous, errs)
-                                      :any ->  _parse(tail, tokens, :phrase, previous, errs)
+                                      :digit  ->  _parse(tail, tokens, :phrase, previous, errs)
+                                      :any    ->  _parse(tail, tokens, :phrase, previous, errs)
                                     end
                         end     
 		end		

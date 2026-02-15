@@ -631,9 +631,14 @@ defmodule ForthIbE.Words do
     {virt_code, [ naive_datetime | data_stack], return_stack, dictionary, recipients}
   end
 
+  def to_timestamp(virt_code, [text | data_stack], return_stack, dictionary, recipients) do
+    naive_timestamp = NaiveDateTime.from_iso8601!(text)
+    {virt_code, [ naive_timestamp | data_stack], return_stack, dictionary, recipients}
+  end
+
   def ts_to_unix( virt_code, [ text_timestamp | data_stack], return_stack, dictionary, recipients) do
-    ts = NaiveDateTime.from_iso8601!(text_timestamp)
-    {:ok, dt} = DateTime.from_naive(ts,"Etc/UTC")
+    #ts = NaiveDateTime.from_iso8601!(text_timestamp)
+    {:ok, dt} = DateTime.from_naive(text_timestamp,"Etc/UTC")
     {virt_code, [ DateTime.to_unix(dt, :millisecond) | data_stack], return_stack, dictionary, recipients}
   end
 
@@ -659,6 +664,7 @@ defmodule ForthIbE.Words do
   # ---------------------------------------------
   def to_atom(virt_code, [string | data_stack], return_stack, dictionary, recipients) do
     atom = String.to_atom(string)
+    #IO.inspect(atom)
     {virt_code, [ atom | data_stack], return_stack, dictionary, recipients}
   end
 
