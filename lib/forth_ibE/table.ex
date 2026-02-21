@@ -28,7 +28,7 @@ defmodule ForthIbE.Table do
     Map.has_key?(table, word_name) 
   end
 
-  def add(table, word_name, word, doc \\ %{stack: "( )", doc: ""})
+  def add(table, word_name, word, doc \\ %{stack: "( )", doc: ""}) # можно убрать
       when is_list(word) or is_function(word) do
     Map.put(table, word_name, {:word, word, doc})
   end

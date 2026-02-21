@@ -14,11 +14,10 @@ defmodule ForthIbE do
   end
 
   def get_var(eng_name, var_name) do
-    GenServer.call(eng_name, {:get_var, var_name})
+    GenServer.call(eng_name, {:get_var, String.downcase(var_name)})
   end
 
   def add_var(eng_name, var_name, value) do
-    GenServer.cast(eng_name, {:add_var, var_name, value})
+    GenServer.cast(eng_name, {:add_var, String.downcase(var_name), value})
   end
-
 end

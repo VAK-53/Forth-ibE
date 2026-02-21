@@ -1,0 +1,8 @@
+{
+"pass-next": {"name": "pass_next", "type": "interprocess", "arity": 3, "notation": "( w -- )",  "def": "пересылает содержимое стека"},
+"forward": {"name": "forward", "type": "interprocess", "arity": 3, "notation": "( [a],i,ts   -- )",  "def": "пересылает содержимое стека"},
+"receive-time": {"name": "receive_time", "type": "interprocess", "arity": 0, "notation": "( -- ts)",  "def": "запрос/получение системной отметки времени"},
+"avost!": {"name": "avost!", "type": "interprocess", "arity": 0, "notation": "( -- sig)",  "def": "получение сигнала"}
+}
+
+

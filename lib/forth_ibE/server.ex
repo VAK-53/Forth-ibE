@@ -24,10 +24,10 @@ defmodule ForthIbE.Server do
   end
 
   @impl true
-  def handle_call({:get_var, name}, _from,  {stack, return_stack, dictionary, table, recipients} = _state) do
+  def handle_call({:get_var, name},  _from,  {stack, return_stack, dictionary, table, recipients} = _state) do
     result = get_var(dictionary, name)
     case result do
-      :error -> {:reply, {:error, "не существует"}, {stack, return_stack, dictionary, recipients}}
+      :error -> {:reply, {:error, "не существует"}, {stack, return_stack, dictionary, table, recipients}}
       value -> {:reply, {:ok, value}, {stack, return_stack, dictionary, table, recipients}}
     end
   end

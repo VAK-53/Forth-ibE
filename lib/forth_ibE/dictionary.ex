@@ -13,10 +13,6 @@ defmodule ForthIbE.Dictionary do
     end
   end
 
-  def get_word(dict, word) do
-    IO.puts("Этого не должно быть " <> word)
-  end
-
   def exist?(dict, word_name) do
     Map.has_key?(dict, word_name) 
   end

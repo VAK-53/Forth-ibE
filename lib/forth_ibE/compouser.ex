@@ -11,8 +11,8 @@ defmodule ForthIbE.Compouser do
   def compouse(table) do #
 	# IO.puts(@root_dir)
  	file_names = [ "math_words.json", "io_words.json", "interpret_words.json", "flow_words.json", 
-				 "logic_words.json",	"stack_words.json", "time_words.json", "server_words.json",
-                 "elixir_words.json"] # 
+				 "logic_words.json", "stack_words.json", "time_words.json", "interprocess_words.json",
+                 "conversion_words.json"] # 
     bootstrap_table = for file_name <- file_names do
 	  full_name = Path.join(storage_dir(), file_name)
 
@@ -44,11 +44,11 @@ defmodule ForthIbE.Compouser do
  
 	# заполняем словарь стандартными words
 	new_table = fill_table(lex_table, table)
-    # IO.inspect(new_table)
+    #IO.inspect(new_table)
 	{:ok, new_table}
  end
 
-  defp fun_check(lex_table) do
+  defp fun_check(lex_table) do # проверка функций
 	Enum.each( # удалить
 	  lex_table,
 	  fn elem -> key   = elem(elem,0)
@@ -64,10 +64,11 @@ defmodule ForthIbE.Compouser do
   defp fill_table(lex_table, table) do
 	new_table = Enum.reduce(lex_table, %{},
 		fn elem, table -> attrs = elem(elem,1)
-							   key = elem(elem,0)
+							   key =  String.downcase(elem(elem,0))
 							   name = Map.get(attrs, "name")
 							   Map.put(table,  key, String.to_atom(name))
 		end )
+    #IO.inspect(new_table)
 	Map.merge(table, new_table)
   end
 end

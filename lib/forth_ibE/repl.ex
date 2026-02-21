@@ -49,7 +49,7 @@ defmodule ForthIbE.REPL do
 		end	
 		# выполнение вирт-кода
         try do 
-            #IO.inspect(virt_code)
+            IO.inspect(virt_code)
             #IO.inspect(dictionary)
             #IO.gets(" Пауза $ ")
 		    {data_stack, return_stack, dictionary} = case evaluate(virt_code, data_stack, return_stack, dictionary, table, recipients) do

@@ -58,7 +58,7 @@ defmodule ForthIbE.Tokenizer do
 		end
 
       :quote -> 
-        IO.inspect(previous)
+        #IO.inspect(previous)
 		case target do
 		  :phrase   ->	new_tokens = save_previous(tokens, target, previous) # закрываем
 				        previous = [] 
