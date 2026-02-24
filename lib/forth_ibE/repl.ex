@@ -21,44 +21,48 @@ defmodule ForthIbE.REPL do
     else
       dict
     end
-	{:ok, table} = ForthIbE.Table.init()
-    {:ok, table} = compouse(table)
+	#{:ok, table} = ForthIbE.Table.init() #, table
+    file_names = [ "math_words.json", "io_words.json", "interpret_words.json", "flow_words.json", 
+				 "logic_words.json", "stack_words.json", "time_words.json", "interprocess_words.json",
+                 "conversion_words.json"]
+    :ets.new(:sys_table, [:public, :named_table])
+    :ok = compouse(file_names) #, table table file_names надо выше определять
 	data_stack = []
 	return_stack = []
     recipients  = [self()]
-	{data_stack, return_stack, dictionary, table, recipients}
+	{data_stack, return_stack, dictionary, recipients} #, table
   end
 
   defp loop(state) do
-    {data_stack, return_stack, dictionary, table, recipients} = state
+    {data_stack, return_stack, dictionary, recipients} = state #, table
     input = IO.gets(" Words $ ") 
 	#IO.inspect(input)
     tokens = parse(String.trim(input))
 
 	#IO.inspect(tokens)
-	{virt_code, dictionary} = case interpret(tokens, dictionary, table) do  # в dictionary помещаются определения! variable тоже?
+	{virt_code, dictionary} = case interpret(tokens, dictionary) do  # в dictionary помещаются определения! variable тоже? #, table
 						  {:error, reason} -> IO.puts(reason)
-                                              state = {[], [], dictionary, table, recipients}
+                                              state = {[], [], dictionary, recipients}  #, table
 											  loop(state)
 						  {virt_code, dictionary} -> 
 										case virt_code do
-										  []		->	state = {data_stack, return_stack, dictionary, table, recipients}
+										  []		->	state = {data_stack, return_stack, dictionary, recipients}  #, table
                                                         loop(state)
 										  _			->	{virt_code, dictionary}	
 										end			  
 		end	
 		# выполнение вирт-кода
         try do 
-            IO.inspect(virt_code)
+            #IO.inspect(virt_code)
             #IO.inspect(dictionary)
             #IO.gets(" Пауза $ ")
-		    {data_stack, return_stack, dictionary} = case evaluate(virt_code, data_stack, return_stack, dictionary, table, recipients) do
+		    {data_stack, return_stack, dictionary} = case evaluate(virt_code, data_stack, return_stack, dictionary, recipients) do #, table
 		      {:ok, data_stack, return_stack, dictionary}   ->  IO.write(" ok\n")
 															    { data_stack, return_stack, dictionary}
 		      {:error, reason}                              ->	IO.puts(reason)
 								                                {[], [], dictionary}
 		    end
-            state = {data_stack, return_stack, dictionary, table, recipients}
+            state = {data_stack, return_stack, dictionary, recipients}  #, table
             loop(state)
         catch error_type, error_value ->
                 IO.puts("Type: #{inspect(error_type)}")

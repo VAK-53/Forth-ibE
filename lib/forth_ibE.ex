@@ -5,7 +5,8 @@ defmodule ForthIbE do
   @server ForthIbE.Server
 
   def start(params) do
-	IO.puts("Старт менеджера интерпретатора Forth_ibE")
+    {name, _stocks} = params
+	IO.puts("Старт движок интерпретатора Forth_ibE #{name}")
 	GenServer.start_link(@server, params)
   end
 
