@@ -5,14 +5,14 @@ defmodule ForthIbE.Server do
   use GenServer
   import ForthIbE.Compouser
   import ForthIbE.Interpreter   # 
-  import ForthIbE.Engin			# evaluate
+  #import ForthIbE.Engin		# evaluate
   import ForthIbE.Tokenizer		# parse
   import ForthIbE.Dictionary
 
   @global_table :sys_table
 
   @impl GenServer
-  def init({name, recipients}) do
+  def init({name, stocks}) do
    	file_names = [ "math_words.json", "io_words.json", "interpret_words.json", "flow_words.json", 
 				 "logic_words.json", "stack_words.json", "time_words.json", "interprocess_words.json",
                  "conversion_words.json"] 
@@ -27,40 +27,41 @@ defmodule ForthIbE.Server do
     {:ok, dictionary} = ForthIbE.Dictionary.init()
     #atom_name = String.to_atom(name)
     Process.register(self(), name)
-	state = {stack, return_stack, dictionary, recipients}   #, table
+	state = {stack, return_stack, dictionary, stocks}   
 	{:ok, state}
   end
 
   @impl true
-  def handle_call({:get_var, name},  _from,  {stack, return_stack, dictionary, recipients} = _state) do #, table
+  def handle_call({:get_var, name},  _from,  {stack, return_stack, dictionary, stocks} = _state) do 
     result = get_var(dictionary, name)
     case result do
-      :error -> {:reply, {:error, "не существует"}, {stack, return_stack, dictionary, recipients}} #, table
-      value -> {:reply, {:ok, value}, {stack, return_stack, dictionary, recipients}} #, table
+      :error -> {:reply, {:error, "не существует"}, {stack, return_stack, dictionary, stocks}} 
+      value -> {:reply, {:ok, value}, {stack, return_stack, dictionary, stocks}} 
     end
   end
 
   @impl true
-  def handle_cast({:execute, words}, {_stack, _return_stack, dictionary, recipients} = state) do #, table
+  def handle_cast({:execute, words}, {_stack, _return_stack, dictionary, stocks} = state) do 
     result = words |> eval(state)
     case result do
-      {:ok, stack, return_stack, dictionary } -> {:noreply, {stack, return_stack, dictionary, recipients}} #, table
-      {:error, _reason} -> {:noreply, {[], [], dictionary, recipients}} # добавить журналирование  #, table
+      {:ok, stack, return_stack, dictionary } -> {:noreply, {stack, return_stack, dictionary, stocks}} 
+      {:error, _reason} -> {:noreply, {[], [], dictionary, stocks}} # добавить журналирование  
     end
   end
 
   @impl true
-  def handle_cast({:add_var, name, value},  {stack, return_stack, dictionary,  recipients}) do #, table
+  def handle_cast({:add_var, name, value},  {stack, return_stack, dictionary,  stocks}) do 
     dictionary = add_var(dictionary, name, value)
-    {:noreply, {stack, return_stack, dictionary, recipients}} #, table
+    {:noreply, {stack, return_stack, dictionary, stocks}} 
   end
 
   # _________________implementation ___________________
 
   defp eval(words, state) do
-    {stack, return_stack, dictionary, recipients} = state #, table
-    {virt_code, dictionary} = words |> parse |> interpret(dictionary)  #, table
-    evaluate(virt_code, stack, return_stack, dictionary,  recipients) #, table
+    {data_stack, return_stack, dictionary, stocks} = state 
+    {virt_code, dictionary} = words |> parse |> interpret(dictionary)  
+    full_state = {{virt_code, data_stack, return_stack, dictionary}, stocks}
+    ForthIbE.Engin.evaluate(full_state) 
   end
 
 end

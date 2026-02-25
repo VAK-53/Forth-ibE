@@ -75,7 +75,6 @@ defmodule ForthIbE.Interpreter do
     #IO.inspect(virt_code)
 	{ ["then" | virt_code],  dict, map}                         # внутренний код возвращаем во вспомогательном словаре
   end
-  #-------------------------
 
   #-------------------------
   # ( variable, abort", ." )

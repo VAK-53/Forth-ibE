@@ -2,8 +2,18 @@ defmodule ForthIbE.Table do
   @moduledoc """
   Модуль работы с таблицей встроенных функций.
   """
-  def init() do
-	{:ok, %{}}
+  #import ForthIbE.Compouser		# compouse
+
+  @global_table :sys_table
+
+  def init(file_names) do
+    #IO.puts("в init table")
+    if false == :lists.member(@global_table, :ets.all()) do
+      #IO.puts("в if")
+      :ets.new(@global_table, [:public, :named_table])
+      :ok = ForthIbE.Compouser.compouse(file_names) 
+    end
+    :ok
   end
 
   def get_atom(word) do          # !!!!
