@@ -2,6 +2,13 @@ defmodule ForthIbE.Utils do
   @moduledoc false
 
   #-----------
+  # для compouser и dictionary
+  #-----------
+
+  @root_dir File.cwd!
+  def storage_dir(), do: @root_dir <> "/lib/priv"
+
+  #-----------
   # утилиты
   #-----------
 

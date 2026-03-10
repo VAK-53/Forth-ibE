@@ -2,10 +2,11 @@ defmodule ForthIbE.Compouser do
   @moduledoc """
   Загрузка таблицы настройки интерпретатора
   """
+  
+  import  ForthIbE.Utils
+  # @root_dir File.cwd!
 
-  @root_dir File.cwd!
-
-  def storage_dir(), do: @root_dir <> "/lib/priv"
+  # def storage_dir(), do: @root_dir <> "/lib/priv"
 
   def compouse(file_names) do #
 	# IO.puts(@root_dir)

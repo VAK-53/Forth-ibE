@@ -2,8 +2,21 @@ defmodule ForthIbE.Dictionary do
   @moduledoc """
   Модуль работы со словарём слов и переменных.
   """
-  def init() do
-	{:ok, %{}}
+  import ForthIbE.Utils
+
+  def init(file_names) do
+    # читаем начальные слова в словарь
+    [bootstrap_dictionary] = for file_name <- file_names do
+	  full_name = Path.join(storage_dir(), file_name)
+      File.stream!(full_name) |> Enum.reduce(%{}, fn line, dictionary -> 
+                                                {[], dictionary} = ForthIbE.Tokenizer.parse(line) |> 
+                                                ForthIbE.Interpreter.interpret(dictionary)
+                                                #IO.inspect(dictionary)
+                                                dictionary
+                                            end)
+    end
+    #IO.inspect(bootstrap_dictionary)
+	{:ok, bootstrap_dictionary}
   end
 
   def get_value(dict, word_name) do

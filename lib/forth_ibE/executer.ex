@@ -1,12 +1,12 @@
-defmodule ForthIbE.Engin do
+defmodule ForthIbE.Executer do
   @moduledoc """
-  Documentation for ForthEngin.
+  Documentation for ForthExecuter.
   """
   import ForthIbE.Dictionary
   import ForthIbE.Utils
 
   def evaluate(full_state) do 
-    {{virt_code, data_stack, return_stack, dictionary}, stocks} = full_state
+    %{forth: {virt_code, data_stack, return_stack, dictionary}, stocks: stocks} = full_state
 
 	result = next({virt_code, data_stack, return_stack, dictionary}, stocks) 
 	case result do
@@ -14,7 +14,7 @@ defmodule ForthIbE.Engin do
 	  {[], data_stack, return_stack, dictionary} ->    #IO.inspect(data_stack)
 													   #IO.inspect(dictionary)
                                                        #IO.puts("Возвращаю результат")
-													   {:ok, data_stack, return_stack, dictionary} #??? , stocks
+													   {:ok, [], data_stack, return_stack, dictionary} # а stocks?
 	end
   end
 

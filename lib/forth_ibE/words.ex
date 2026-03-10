@@ -299,7 +299,7 @@ defmodule ForthIbE.Words do
 	case set_var(dictionary, var_name, x) do
 	  :error -> {:error, "в словаре отсутствует объявленная переменная #{var_name} "}
 	  dict	->  # IO.puts("установили переменную")
-                IO.inspect(dict)
+                # IO.inspect(dict)
                 {virt_code, data_stack, return_stack, dict, stocks}
 	end
   end
