@@ -4,7 +4,8 @@ defmodule ForthIbE.Dictionary do
   """
   import ForthIbE.Utils
 
-  def init(file_names) do
+  def init do
+    file_names = ["in-built-words.txt"]
     # читаем начальные слова в словарь
     [bootstrap_dictionary] = for file_name <- file_names do
 	  full_name = Path.join(storage_dir(), file_name)

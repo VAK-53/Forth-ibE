@@ -8,10 +8,13 @@ defmodule ForthIbE.Compouser do
 
   # def storage_dir(), do: @root_dir <> "/lib/priv"
 
-  def compouse(file_names) do #
+  def compouse do #
 	# IO.puts(@root_dir)
 	#{:ok, table} = ForthIbE.Table.init()
-
+    
+    list_name = Path.join(storage_dir(), "list.txt")
+    {:ok, lines} = File.read(list_name)
+    file_names = lines |> String.split("\n", trim: true)
     bootstrap_table = for file_name <- file_names do
 	  full_name = Path.join(storage_dir(), file_name)
 

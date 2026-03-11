@@ -2,16 +2,15 @@ defmodule ForthIbE.Table do
   @moduledoc """
   Модуль работы с таблицей встроенных функций.
   """
-  #import ForthIbE.Compouser		# compouse
 
   @global_table :sys_table
 
-  def init(file_names) do
+  def init do
     #IO.puts("в init table")
     if false == :lists.member(@global_table, :ets.all()) do
       #IO.puts("в if")
       :ets.new(@global_table, [:public, :named_table])
-      :ok = ForthIbE.Compouser.compouse(file_names) 
+      :ok = ForthIbE.Compouser.compouse 
     end
     :ok
   end

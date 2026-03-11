@@ -15,21 +15,17 @@ defmodule ForthIbE.REPL do
   def init(dict) do     # далее проверка наличие словаря после перезапуска
     #IO.puts("в init repl")
     # заполняем таблицу встроенных слов
-    file_names = [ "math_words.json", "io_words.json", "interpret_words.json", "flow_words.json", 
-				 "logic_words.json", "stack_words.json", "time_words.json", "interprocess_words.json",
-                 "conversion_words.json"]   # надо держать в конфиге
-	:ok = ForthIbE.Table.init(file_names)
+	:ok = ForthIbE.Table.init #file_names
     
-    file_names = ["in-built-words.txt"] # надо держать в конфиге
     dictionary = if dict == nil do 
-      {:ok, dictionary} = ForthIbE.Dictionary.init(file_names)
+      {:ok, dictionary} = ForthIbE.Dictionary.init
       dictionary
     else
       dict
     end
   
     stocks  = [self()]
-	forth_state = {[], [], [], dictionary} # virt_code = [] data_stack = [] return_stack = []
+	forth_state = {[], [], [], dictionary} 
     %{forth: forth_state, stocks: stocks}
   end
 
