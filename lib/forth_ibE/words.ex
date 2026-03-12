@@ -653,7 +653,7 @@ defmodule ForthIbE.Words do
   def pass_next(virt_code, [ word | data_stack], return_stack, dictionary, stocks) do
     #IO.inspect(stocks) 
     Enum.each(stocks, fn name ->
-       ForthIbE.execute(name, word)
+       ForthIbE.Monada.execute(name, word)  # только монады напрямую запускаются?
     end)
     {virt_code,  data_stack, return_stack, dictionary, stocks}
   end
