@@ -10,20 +10,19 @@ defmodule ForthIbE.Dictionary do
     [bootstrap_dictionary] = for file_name <- file_names do
 	  full_name = Path.join(storage_dir(), file_name)
       File.stream!(full_name) |> Enum.reduce(%{}, fn line, dictionary -> 
-                                                {[], dictionary} = ForthIbE.Tokenizer.parse(line) |> 
-                                                ForthIbE.Interpreter.interpret(dictionary)
-                                                #IO.inspect(dictionary)
+                                                {[], [], [], dictionary} = ForthIbE.Tokenizer.parse(line) |> 
+                                                ForthIbE.Interpreter.interpret({[], [], [], dictionary}) 
                                                 dictionary
                                             end)
     end
-    #IO.inspect(bootstrap_dictionary)
 	{:ok, bootstrap_dictionary}
   end
 
   def get_value(dict, word_name) do
+    #IO.puts(word_name)
     case Map.has_key?(dict, word_name) do
       true -> Map.get(dict, word_name) 
-      false ->	{ :unknown, word_name }
+      false ->	:unknown                #, word_name }
     end
   end
 
@@ -37,7 +36,8 @@ defmodule ForthIbE.Dictionary do
   end
 
   def add_word(dict, word_name, words \\ []) do
-    #IO.puts("добавляем в словарь определение слова")
+    #IO.puts("Добавляем в словарь определение слова #{word_name}")
+    #IO.inspect(words)
     Map.put(dict, word_name, {:words, words})
   end
 
@@ -54,6 +54,7 @@ defmodule ForthIbE.Dictionary do
   end
 
   def get_var(dict, word_name) do
+    #IO.puts("in get_var #{word_name}")
 	case exist?(dict, word_name) do
       true	-> 	{:var, value} = Map.get(dict, word_name ) 
     			value

@@ -15,12 +15,10 @@ defmodule ForthIbE.Table do
     :ok
   end
 
-  def get_atom(word) do          # !!!!
-    #IO.puts("get in sys_table " <> word)
-    #IO.inspect(:ets.lookup(:sys_table, word))
+  def get_atom_from_table(word) do          # !!!!
     case :ets.lookup(:sys_table, word) do
       [{_word, atom, _type}]  ->  atom
-      [] ->	{:unknown, word}
+      [] ->	:unknown
     end
   end
 

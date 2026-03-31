@@ -168,7 +168,7 @@ defmodule ForthIbE.Tokenizer do
 			 token = case target do
 				:integer		-> String.to_integer(lexem)
 				:float			-> String.to_float(lexem)
-				:word 			-> String.downcase(lexem) # слова безразличны к регистру 
+				:word 			-> lexem # String.downcase( слова безразличны к регистру 
                 :phrase         -> lexem
 				:minus	 		-> :minus
 				:double_dash	-> :double_dash

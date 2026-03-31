@@ -23,13 +23,13 @@ defmodule ForthIbE.Compouser do
 		  case JSON.decode(content) do # читаем таблицу слов
 			{:ok, acc} ->  acc
 		 	{:unexpected_end, _offset} ->
-				IO.puts("binary содержит неполное значение JSON")
-			{:error, {:invalid_byte, offset, byte}} -> 
-				IO.puts("binary содержит неожиданный байт или недопустимый байт #{byte} в #{offset}")
-			{:unexpected_sequence, _offset, bytes} ->
-				IO.puts("binary содержит недопустимый экранированный символ UTF-8 #{bytes}")
+                raise ComposeError, message: "incomplete value JSON", file: file_name
+			{:error, {:invalid_byte, _offset, _byte}} -> 
+                raise ComposeError, message: "unexpected or invalid byte", file: file_name
+			{:unexpected_sequence, _offset, _bytes} ->
+                raise ComposeError, message: "invalid escaped character", file: file_name
 		  end
-		{:error, reason} -> IO.puts("Failed to read file: #{reason}")
+		{:error, _reason} -> raise ComposeError, message: "Failed to read file", file: file_name
 	  end
 	end
 
@@ -38,16 +38,13 @@ defmodule ForthIbE.Compouser do
 	  					fn table, lex_table -> Map.merge(lex_table, table) end
 				)
 
-	# преобразуем бинарные строки в атомы; необходимость отпала: полностью перешли на словарь
-	#lex_table = keys_to_atom(lex_table)
-
 	# Проверяем наличие функций атомов
 	fun_check(lex_table)	
  
 	# заполняем словарь стандартными words
-	fill_table(lex_table)   #, table
+	fill_table(lex_table)   
     #IO.inspect(new_table)
-	:ok     #new_table
+	:ok   
  end
 
   defp fun_check(lex_table) do # проверка функций
@@ -63,7 +60,7 @@ defmodule ForthIbE.Compouser do
   end
 
 
-  defp fill_table(lex_table) do #, table
+  defp fill_table(lex_table) do 
 	Enum.reduce(lex_table, %{},
 		fn elem, table ->   attrs = elem(elem,1)
 						    key =  String.downcase(elem(elem,0))

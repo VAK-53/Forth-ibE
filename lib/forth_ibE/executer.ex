@@ -3,60 +3,58 @@ defmodule ForthIbE.Executer do
   Documentation for ForthExecuter.
   """
   import ForthIbE.Dictionary
+  #import ForthIbE.Words
   import ForthIbE.Utils
 
-  def evaluate(full_state) do 
-    %{forth: {virt_code, data_stack, return_stack, dictionary}, stocks: stocks} = full_state
-
-	result = next({virt_code, data_stack, return_stack, dictionary}, stocks) 
-	case result do
-	  {:error, reason } -> {:error, reason }
-	  {[], data_stack, return_stack, dictionary} ->    #IO.inspect(data_stack)
-													   {:ok, [], data_stack, return_stack, dictionary} # а stocks?
-	end
+  def evaluate(state) do 
+	state |> 
+    next 
   end
 
-  defp next({[], data_stack, return_stack, dictionary}, _stocks) do #, _table
-	{[], data_stack, return_stack,  dictionary}     # ответ
-  end                                               # stocks больше не пригодится
+  defp next({[], data_stack, return_stack, dictionary}) do 
+	{[], data_stack, return_stack,  dictionary}   
+  end                                              
 
-  defp next({[first | tail], data_stack, return_stack, dictionary}, stocks) when is_number(first) do 
+  defp next({[first | tail], data_stack, return_stack, dictionary}) when is_number(first) do 
     #IO.inspect(first)
-	next({tail, [first | data_stack], return_stack, dictionary}, stocks) 
+	next({tail, [first | data_stack], return_stack, dictionary}) 
   end
 
-  defp next({[first | tail], data_stack, return_stack, dictionary}, stocks) when is_atom(first) do 
+  defp next({[first | tail], data_stack, return_stack, dictionary}) when is_atom(first) do 
+    #IO.puts("в is_atom")
 	#IO.inspect(first)
-    case apply(ForthIbE.Words, first, [tail, data_stack, return_stack, dictionary, stocks]) do 
-	  {:error, reason}	->	{:error, reason}
-	  {virt_code, data_stack, return_stack,  dict, stocks} -> #IO.puts("выполнили функцию #{first}")
-    					    next({virt_code, data_stack, return_stack, dict}, stocks) 
-	end
+    apply(ForthIbE.Words, first, [tail, data_stack, return_stack, dictionary]) |>
+    next
   end
 
-  # эта работа выполнена в интерпретаторе!
-  defp next({[first | tail], data_stack, return_stack, dictionary}, stocks) when is_binary(first) do  
-	#IO.puts("binary в engine")
+  defp next({[first | tail], data_stack, return_stack, dictionary}) when is_binary(first) do  
+    #IO.puts("в is_binary #{first}")
+    #IO.inspect(data_stack)
 	case get_value(dictionary, first) do
-	  {:words, word_code}	->  virt_code = word_code ++ tail
- 			                    next({virt_code,  data_stack, return_stack, dictionary}, stocks) 
-	  _	                    ->  next({tail, [first | data_stack], return_stack, dictionary}, stocks)	 
+      :unknown              ->  next({tail, [first | data_stack], return_stack, dictionary})
+      {:var, :unknown}      ->  next({tail, [first | data_stack], return_stack, dictionary})
+      {:var, _value}        ->  next({tail, [first | data_stack], return_stack, dictionary})
+      # работа по расширению кода выполняется здесь ради рекурсии! 
+	  {:words, word_code}   ->  virt_code = word_code ++ tail   # для рекурсии
+                                #IO.inspect(data_stack)
+                                #IO.inspect(virt_code)
+ 		                        next({virt_code,  data_stack, return_stack, dictionary}) 
+	  	 
 	end	
   end
 
-  defp next({[map | tail], [flag | s_tail], return_stack, dictionary}, stocks) when is_map(map) do 
+  defp next({[map | tail], [flag | s_tail], return_stack, dictionary}) when is_map(map) do 
 	#IO.puts("map в engine")
     #IO.inspect(flag)
 	case is_falsely(flag) do
-	  true  ->    case Map.get(map, :else) do
-                    :error  ->  {:error, "В операторе if почему то отсутствует else." }
-			        []      ->  #IO.puts("пустой else")
-                                 next({tail, s_tail, return_stack, dictionary}, stocks) 
-                    code    ->  next({code ++ tail, s_tail, return_stack, dictionary}, stocks) 
-                  end
-	  false ->    code = Map.get(map, :if)
-                  recurse_code = code ++ tail
-                  next({recurse_code, s_tail, return_stack, dictionary}, stocks) 
+	  false ->  case Map.get(map, :if) do
+                  code when is_list(code) ->  next({code ++ tail, s_tail, return_stack, dictionary}) 
+			      _     ->  raise InterpretError, message: "incorrect if-else-then structure", code: tail
+                end
+	  true  ->  case Map.get(map, :else) do
+                  code when is_list(code) ->   next({code ++ tail, s_tail, return_stack, dictionary}) 
+                  _    ->   next({tail, s_tail, return_stack, dictionary})
+                end
 	end	
   end
 end
