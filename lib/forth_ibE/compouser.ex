@@ -63,7 +63,7 @@ defmodule ForthIbE.Compouser do
   defp fill_table(lex_table) do 
 	Enum.reduce(lex_table, %{},
 		fn elem, table ->   attrs = elem(elem,1)
-						    key =  String.downcase(elem(elem,0))
+						    key =  elem(elem,0) #String.downcase()
 						    name = Map.get(attrs, "name") |> String.to_atom
                             type = Map.get(attrs, "type")
                             :ets.insert(:sys_table, {key, name, type})

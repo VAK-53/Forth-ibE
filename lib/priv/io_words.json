@@ -1,12 +1,12 @@
 {
-"emit": { "name": "emit", "type": "io", "notation": "( c -- )", "def": "извлечение из стека данных ascii значение  и распечатывание"},
-"cr":  {"name": "cr", "type": "io",  "notation": "( -- )", "def": "выполнение возврата каретки"},
-"space":  {"name": "space", "type": "io",  "notation": "( -- )", "def": "вывод пробела"},
-"spaces":  {"name": "spaces", "type": "io",  "notation": "( -- )", "def": "вывод заданного числа пробелов"},
+"EMIT": { "name": "emit", "type": "io", "notation": "( c -- )", "def": "извлечение из стека данных ascii значение  и распечатывание"},
+"CR":  {"name": "cr", "type": "io",  "notation": "( -- )", "def": "выполнение возврата каретки"},
+"SPACE":  {"name": "space", "type": "io",  "notation": "( -- )", "def": "вывод пробела"},
+"SPACES":  {"name": "spaces", "type": "io",  "notation": "( -- )", "def": "вывод заданного числа пробелов"},
 ".":  {"name": "dot", "type": "io",  "notation": "( x -- )", "def": "извлечение из стека данных и распечатывает литерального значения"},
 ".\"":  {"name": "dot_msg", "type": "io",  "notation": "( -- )", "def": "Вывод строки символов после .\" до замыкающей кавычки"},
-".r":  {"name": "dot_r", "type": "io ",  "notation": "( n1 n2 -- )", "def": "распечатывает целый стек данных без без разрушения его"},
-".s":  {"name": "dump_data_stack", "type": "io ",  "notation": "( -- )", "def": "распечатывает целый стек данных без разрушения его"},
-"dictionary":  {"name": "dictionary", "type": "io ",  "notation": "( -- )", "def": "распечатывает словарь"}
+".R":  {"name": "dot_r", "type": "io ",  "notation": "( n1 n2 -- )", "def": "распечатывает целый стек данных без разрушения его"},
+".S":  {"name": "dump_data_stack", "type": "io ",  "notation": "( -- )", "def": "распечатывает целый стек данных без разрушения его"},
+"DICTIONARY":  {"name": "dictionary", "type": "io ",  "notation": "( -- )", "def": "распечатывает словарь"}
 }
 

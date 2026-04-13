@@ -1,5 +1,5 @@
 defmodule ForthIbE.Impl.Common do
-
+  
   import ForthIbE.Compouser
   import ForthIbE.Interpreter   # 
   import ForthIbE.Tokenizer		# parse
@@ -21,7 +21,10 @@ defmodule ForthIbE.Impl.Common do
         {:ok, dictionary} = ForthIbE.Dictionary.init
 
         Process.register(self(), name)
-	    state = %{forth: {[], [], [], dictionary}, sources: [], stocks: stocks} 
+        # Добавляем врождённые параметры движка монады
+        new_dictionary = dictionary |> ForthIbE.Dictionary.add_var("_ENG_NAME", name) |>
+                         ForthIbE.Dictionary.add_var("_STOCKS", stocks)
+	    state = %{forth: {[], [], [], new_dictionary}, sources: [], stocks: stocks} 
 	    {:ok, state}
       end
 
@@ -36,6 +39,12 @@ defmodule ForthIbE.Impl.Common do
       end
 
       @impl true
+      def handle_call(:get_stocks,  _from,  state) do 
+        stocks = Map.fetch(state, :stocks)
+        {:reply, stocks, state} 
+      end
+
+      @impl true
       def handle_cast({:add_var, name, value}, state) do 
         {:ok, {[], _data_stack, _return_stack, dictionary}} = Map.fetch(state, :forth)  # для словаря
         new_dictionary = ForthIbE.Dictionary.add_var(dictionary, name, value)
@@ -45,23 +54,48 @@ defmodule ForthIbE.Impl.Common do
 
       @impl true
       def handle_cast({:execute, words}, state) do 
-        {:ok, {[], _data_stack, _return_stack, dictionary}} = Map.fetch(state, :forth)  # для словаря      
-        result = words |> eval(state) # !!!
-        case result do
-          {:ok, [], new_data_stack, new_return_stack, new_dictionary } -> 
+        {:ok, forth_state} = Map.fetch(state, :forth)  # для словаря  
+        {_vc, _ds, _rs, dictionary} = forth_state    
+        new_state = words |> eval(forth_state) # !!!
+        case new_state do
+          {[], new_data_stack, new_return_stack, new_dictionary } -> 
             new_state = Map.put(state, :forth, {[], new_data_stack, new_return_stack, new_dictionary})
             {:noreply, new_state}
-          {:error, _reason} -> 
+          :error -> 
             new_state = Map.put(state, :forth, {[], [], [], dictionary})
             {:noreply, new_state} # добавить журналирование  
         end
       end
 
-      defp eval(words, full_state) do
-        %{forth: {_virt_code, data_stack, return_stack, dictionary}, sources: sources, stocks: stocks} = full_state 
-        {virt_code, dictionary} = words |> parse |> interpret(dictionary)  
-        full_state = %{forth: {virt_code, data_stack, return_stack, dictionary}, sources: sources, stocks: stocks}
-        ForthIbE.Executer.evaluate(full_state) 
+      @impl true
+      def handle_info({:start_next, id, word},  state) do 
+        {:ok, stocks} = Map.fetch(state, :stocks)  
+        Enum.each(stocks, fn name ->
+           ForthIbE.Monad.execute(name, word)  # только монады напрямую запускаются и останавливаются!?
+        end)
+        {:noreply, state} 
+      end
+
+      defp eval(words, state) do
+        try do
+          new_state = words |> parse |> interpret(state) |> ForthIbE.Executer.evaluate
+        rescue
+          e in ExecuterError ->
+            case e.message do
+              "division by zero"    ->  Logger.info("Деление на 0.")
+              "negative root value" ->  Logger.info("Отрицательное подкоренное выражение.")
+              "there's no declared variable" ->
+                                        Logger.info("Отсутствует требуемая переменная #{e.name}.")
+              "there's no need constant"     ->
+                                        Logger.info("Отсутствует требуемая константа \"#{e.name}\".")
+              "undefined variable"  ->  Logger.info("Значение переменной \"#{e.name}\" не определено.")         
+              "not number"          ->  Logger.info("Значение \"#{e.name}\" не является числом.")             
+              "an empty stack"      ->  Logger.info("Cтек пуст.")
+            end
+              Logger.info("Стек: #{inspect(e.stack)}")
+              Logger.info("Код: #{inspect(e.code)}")
+            :error
+        end
       end
     end
   end

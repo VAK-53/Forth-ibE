@@ -6,7 +6,9 @@ defmodule ForthIbE.Interpreter do
   import ForthIbE.Dictionary
 
   def interpret(tokens, state) do 
-    # IO.inspect(tokens)            
+    #IO.puts("В interpret")
+    #IO.inspect(tokens)            
+    #IO.inspect(state)            
     _interpret(tokens, state)           
   end
 
@@ -38,9 +40,9 @@ defmodule ForthIbE.Interpreter do
   #-------------------------
   # ( if ... then ...else )
   #-------------------------
-  defp _interpret(["if" | tail], state) do
+  defp _interpret(["IF" | tail], state) do
     # вначале разбиваем ветвление на части
-    {vc, ds, rs, dict}	= state		                                                     					
+    {_vc, ds, rs, dict}	= state		                                                     					
     {intermediate, ["then" | behind_tokens]}  = Enum.split_while(tail, fn s -> s != "then"  end)
     split  = Enum.split_while(intermediate, fn s -> s != "else"  end)
     if_state = {[],ds, rs, dict} # персональное состояние для if
@@ -49,7 +51,7 @@ defmodule ForthIbE.Interpreter do
                                             if_map = %{} |> Map.put(:if, if_code)  # вставляем в словарь только код за if                                  
                                             {if_map, stack, return, if_dict}
                                           
-      {if_tokens, ["else" | else_tokens]} ->  {if_code, stack, return, if_dict} = _interpret(if_tokens, if_state)
+      {if_tokens, ["else" | else_tokens]} ->  {if_code, _stack, _return, if_dict} = _interpret(if_tokens, if_state)
                                               if_map = %{} |> Map.put(:if, if_code)      # вставляем в словарь код за if
 
                                               #IO.puts("else tokens: #{inspect(else_tokens)}") 
@@ -69,7 +71,7 @@ defmodule ForthIbE.Interpreter do
 
   defp _interpret(["IF" | tail], state) do
     # вначале разбиваем ветвление на части
-    {vc, ds, rs, dict}	= state		                                                     					
+    {_vc, ds, rs, dict}	= state		                                                     					
     {intermediate, ["THEN" | behind_tokens]}  = Enum.split_while(tail, fn s -> s != "THEN"  end)
     split  = Enum.split_while(intermediate, fn s -> s != "ELSE"  end)
     if_state = {[],ds, rs, dict} # персональное состояние для if
@@ -78,7 +80,7 @@ defmodule ForthIbE.Interpreter do
                                             if_map = %{} |> Map.put(:if, if_code)  # вставляем в словарь только код за if                                  
                                             {if_map, stack, return, if_dict}
                                           
-      {if_tokens, ["ELSE" | else_tokens]} ->  {if_code, stack, return, if_dict} = _interpret(if_tokens, if_state)
+      {if_tokens, ["ELSE" | else_tokens]} ->  {if_code, _stack, _return, if_dict} = _interpret(if_tokens, if_state)
                                               if_map = %{} |> Map.put(:if, if_code)      # вставляем в словарь код за if
 
                                               #IO.puts("else tokens: #{inspect(else_tokens)}") 
@@ -99,13 +101,13 @@ defmodule ForthIbE.Interpreter do
   #-------------------------
   # ( variable, abort", ." )
   #-------------------------
-  defp _interpret(["variable", var_name | tail],  state) do 
+  defp _interpret(["VARIABLE", var_name | tail],  state) do 
     {virt_code, data_stack, return_stack, dictionary} = state
 	new_dict = add_var(dictionary, var_name, :unknown)
 	_interpret(tail,  {virt_code, data_stack, return_stack, new_dict}) 
   end
 
-  defp _interpret(["abort\"" | tail],  state) do 
+  defp _interpret(["ABORT\"" | tail],  state) do 
 	{quoted_tokens, [:end_quote | tokens]} = Enum.split_while(tail, fn s -> s != :end_quote  end)
 	string = Enum.join(quoted_tokens, " ")
 	#IO.puts(string)
@@ -143,8 +145,9 @@ defmodule ForthIbE.Interpreter do
   defp _interpret([token | tail], state) when is_binary(token) do   # преобразуем токены и собираем virt_code  
     #IO.puts("is binary: #{token} #{inspect(tail)}")
     {_virt_code, _data_stack, _return_stack, dictionary} = state
-    downcase_token = String.downcase(token)
-	lookup = get_atom_from_table(downcase_token)
+    # downcase_token = String.downcase(token)
+	lookup = get_atom_from_table(token) # downcase_
+    #IO.puts("нашли #{inspect(lookup)}")
 	case lookup do 
 	  :unknown  ->  found = get_value(dictionary, token)
                     case found do

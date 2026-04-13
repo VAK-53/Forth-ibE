@@ -1,6 +1,7 @@
 {
-"to-atom": {"name": "to_atom", "type": "conversion", "arity": 1, "notation": "( x   --  a )",  "def": "преобразует строку в атом"},
-"to-list": {"name": "to_list", "type": "conversion", "arity": 1, "notation": "( st   --  ls )",  "def": "преобразует строки из стека в список"},
+"TO-ATOM":  {"name": "to_atom", "type": "conversion", "arity": 1, "notation": "( x   --  a )",  "def": "преобразует строку в атом"},
+"TO-LIST":  {"name": "to_list", "type": "conversion",  "notation": "( st   --  ls )",  "def": "упаковываем элементы из стека в список"},
+"TO-TUPLE": {"name": "to_tuple", "type": "conversion",  "notation": "( st   --  ls )",  "def": "упаковываем элементы из стека в кортеж"},
 "stocks": {"name": "stocks", "type": "conversion", "arity": 1, "notation": "( --  ls )",  "def": "размещает список стоков в стеке"},
 "delete-stock": {"name": "delete_stock", "type": "conversion", "arity": 1, "notation": "( -- )",  "def": "удаляет сток из списка в состоянии"}
 }

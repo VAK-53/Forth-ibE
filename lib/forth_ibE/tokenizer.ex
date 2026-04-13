@@ -5,19 +5,18 @@ defmodule ForthIbE.Tokenizer do
 
   def parse(string) do
     char_list = String.to_charlist(string <> "\n") 
-	#IO.inspect(char_list)
     {tokens, errs} = _parse(char_list, [], nil, [], []) # начальное состояние лексера
     case errs do
       [] -> {:ok}
       _  -> IO.inspect(errs)
             {:errs}
     end
+    #IO.inspect(tokens)
     Enum.reverse(tokens) # собираем токены на прямом пути
   end
   
   # заключительный шаг
   defp _parse([], tokens, target, previous, errs) do
-    #IO.puts(target)
 	new_tokens  = save_previous(tokens, target, previous)	  	
 	{new_tokens, errs}
   end
@@ -25,10 +24,8 @@ defmodule ForthIbE.Tokenizer do
   # tagets: nil, :integer, :float, :word, :err
   defp _parse(charlist, tokens, target, previous, errs) do
     [c | tail] = charlist
-    #IO.puts(c)
     case get_char(c) do
-      :digit -> # толерантный символ по отношению к цели
-        #IO.puts(c)    
+      :digit -> # толерантный символ по отношению к цели    
 		previous = [c | previous]
 		target = case target do
                   nil		->  :integer
@@ -58,7 +55,6 @@ defmodule ForthIbE.Tokenizer do
 		end
 
       :quote -> 
-        #IO.inspect(previous)
 		case target do
 		  :phrase   ->	new_tokens = save_previous(tokens, target, previous) # закрываем
 				        previous = [] 
@@ -103,7 +99,6 @@ defmodule ForthIbE.Tokenizer do
 		end
 
       :space -> 
-        #IO.puts(previous)
 		case target do
           :end_quote ->  new_tokens   = save_previous(tokens, :end_quote, previous)
                         previous = []
@@ -164,11 +159,10 @@ defmodule ForthIbE.Tokenizer do
 	  _   -> lexem = previous
 		     |>  Enum.reverse()
 			 |>  List.to_string()
-             #IO.puts(lexem)
 			 token = case target do
 				:integer		-> String.to_integer(lexem)
 				:float			-> String.to_float(lexem)
-				:word 			-> lexem # String.downcase( слова безразличны к регистру 
+				:word 			-> lexem 
                 :phrase         -> lexem
 				:minus	 		-> :minus
 				:double_dash	-> :double_dash

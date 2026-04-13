@@ -7,6 +7,7 @@ defmodule ForthIbE.Executer do
   import ForthIbE.Utils
 
   def evaluate(state) do 
+    #IO.inspect(state)
 	state |> 
     next 
   end
@@ -23,12 +24,14 @@ defmodule ForthIbE.Executer do
   defp next({[first | tail], data_stack, return_stack, dictionary}) when is_atom(first) do 
     #IO.puts("в is_atom")
 	#IO.inspect(first)
+	#IO.inspect(tail)
     apply(ForthIbE.Words, first, [tail, data_stack, return_stack, dictionary]) |>
     next
   end
 
   defp next({[first | tail], data_stack, return_stack, dictionary}) when is_binary(first) do  
     #IO.puts("в is_binary #{first}")
+	#IO.inspect(first)
     #IO.inspect(data_stack)
 	case get_value(dictionary, first) do
       :unknown              ->  next({tail, [first | data_stack], return_stack, dictionary})

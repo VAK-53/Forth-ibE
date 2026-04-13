@@ -1,15 +1,15 @@
 {
-"do":    {"name": "do_word", "type": "flow", "notation": "( limit count -- )", "def": "начало цикла со счётчиком"},
-"i":	 {"name": "i", "type": "flow",  "notation": "( -- count) ()", "def": "копирование вершины стека возврата с индексом цикла в стек данных"},
-"j":	 {"name": "j", "type": "flow",  "notation": "( -- count) ()", "def": "копирование следующего индекса цикла в стек данных"},
-"r@":    {"name": "copy_r_to_d", "type": "flow",  "notation": "( -- data)", "def": "копирование вершины стека возврата в стек данных"},
-">r":    {"name": "move_d_to_r", "type": "flow",  "notation": "( data -- )", "def": "перемещение вершины стека данных  в стек возврата"},
-"r>":    {"name": "move_r_to_d", "type": "flow",  "notation": "( -- data)", "def": "перемещение вершины стека возврата в стек данных"},
-"loop":  {"name": "loop", "type": "flow",  "notation": "( -- )", "def": "продолжение процесса цикла"},
-"+loop": {"name": "plus_loop", "type": "flow ",  "notation": "( inc -- )", "def": "продолжение процесса цикла c приращением"},
-"begin": {"name": "begin", "type": "flow",  "notation": "( -- )", "def": "начало объявления цикла"},
-"until": {"name": "until", "type": "flow",  "notation": "( bool -- )", "def": "продолжение цикла пока условие истинно"},
-"while": {"name": "while", "type": "flow",  "notation": "( bool -- )", "def": "продолжение цикла пока условие ложно"},
-"repeat": {"name": "repeat", "type": "flow",  "notation": "( -- )", "def": "окончание цикла"}
+"DO":    {"name": "do_word", "type": "flow", "notation": "( limit count -- )", "def": "начало цикла со счётчиком"},
+"I":	 {"name": "i", "type": "flow",  "notation": "( -- count) ()", "def": "копирование вершины стека возврата с индексом цикла в стек данных"},
+"J":	 {"name": "j", "type": "flow",  "notation": "( -- count) ()", "def": "копирование следующего индекса цикла в стек данных"},
+"R@":    {"name": "copy_r_to_d", "type": "flow",  "notation": "( -- data)", "def": "копирование вершины стека возврата в стек данных"},
+">R":    {"name": "move_d_to_r", "type": "flow",  "notation": "( data -- )", "def": "перемещение вершины стека данных  в стек возврата"},
+"R>":    {"name": "move_r_to_d", "type": "flow",  "notation": "( -- data)", "def": "перемещение вершины стека возврата в стек данных"},
+"LOOP":  {"name": "loop", "type": "flow",  "notation": "( -- )", "def": "продолжение процесса цикла"},
+"+LOOP": {"name": "plus_loop", "type": "flow ",  "notation": "( inc -- )", "def": "продолжение процесса цикла c приращением"},
+"BEGIN": {"name": "begin", "type": "flow",  "notation": "( -- )", "def": "начало объявления цикла"},
+"UNTIL": {"name": "until", "type": "flow",  "notation": "( bool -- )", "def": "продолжение цикла пока условие истинно"},
+"WHILE": {"name": "while", "type": "flow",  "notation": "( bool -- )", "def": "продолжение цикла пока условие ложно"},
+"REPEAT": {"name": "repeat", "type": "flow",  "notation": "( -- )", "def": "окончание цикла"}
 }
 

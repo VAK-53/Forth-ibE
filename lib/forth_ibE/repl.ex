@@ -32,7 +32,7 @@ defmodule ForthIbE.REPL do
   defp loop(state) do
     {_virt_code, _data_stack, _return_stack, dictionary} = state 
     try do
-
+      #IO.puts("В REPL")
 	  new_state = IO.gets("~Words $ ") |> String.trim |> 
                   parse |> interpret(state) |>  evaluate  
 	   

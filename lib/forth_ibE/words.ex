@@ -419,7 +419,9 @@ defmodule ForthIbE.Words do
   end
 
   def constant([const_name | virt_code],  data_stack, return_stack, dictionary) do
-    if data_stack == [], do: raise ExecuterError, message: "an empty stack", code: virt_code, stack: data_stack, dict: dictionary, name: const_name
+    if data_stack == [] do
+         raise ExecuterError, message: "an empty stack", code: virt_code, stack: data_stack, dict: dictionary, name: const_name
+    end
     [x | data_stack] = data_stack
     if Map.has_key?(dictionary, const_name) do
        raise ExecuterError, message: "there is no need constant", code: virt_code, stack: data_stack, dict: dictionary, name: const_name
@@ -741,6 +743,15 @@ defmodule ForthIbE.Words do
   # ---------------------------------------------
   # server operations
   # ---------------------------------------------
+  def start_next(virt_code, [ word | data_stack], return_stack, dictionary) do
+    slf = self()
+    #Enum.each(stocks, fn name ->
+    #   ForthIbE.Monad.execute(name, word)  # только монады напрямую запускаются?
+    #end)
+    send(slf, {:start_next, slf, word} )
+    {virt_code,  data_stack, return_stack, dictionary}
+  end
+
   def receive_time(virt_code, data_stack, return_stack, dictionary) do
     {:tick, ts, :sys_timer} = SysTimer.get_sys_time
     {virt_code,  [ts | data_stack], return_stack, dictionary}
@@ -752,18 +763,23 @@ defmodule ForthIbE.Words do
       {:avost} -> #IO.puts("Поймал АВОСТ")
                   -1
     after
-      0 -> 0
+      0        -> #IO.puts("Нет АВОСТа")
+                  0
     end
     {virt_code,  [avost | data_stack], return_stack, dictionary}
   end
 
-  def forward(virt_code, [where | data_stack], return_stack, dictionary) do #!!! 
+  def forward(virt_code, data_stack, return_stack, dictionary) do #!!! 
     #IO.inspect(where)
     #IO.inspect(data_stack)
     mail = data_stack |> Enum.reverse |> List.to_tuple 
+    where = case ForthIbE.Dictionary.get_var(dictionary, "_STOCKS") do
+      :error -> raise ExecuterError, message: "not var", code: virt_code, stack: data_stack, dict: dictionary, name: "_STOCKS"
+      value  -> value
+    end
     Enum.each(where, fn name ->
-      send(name, mail)
-    end)
+                    send(name, mail) end
+    )
     {virt_code,  [], return_stack, dictionary}
   end
 
