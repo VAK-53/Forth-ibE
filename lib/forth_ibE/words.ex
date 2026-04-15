@@ -457,7 +457,7 @@ defmodule ForthIbE.Words do
 	  [] -> IO.write("стек пуст ")  # !!! перевести в кортеж 
 			[]	
 	  _  -> [x | tail] = data_stack
-    		IO.write("#{x} ")
+    		IO.write("#{inspect(x)} ")
 			tail
 	end
     {virt_code, data_stack, return_stack, dictionary}

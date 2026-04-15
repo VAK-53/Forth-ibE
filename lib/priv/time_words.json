@@ -1,12 +1,12 @@
 {
-"time&date": {"name": "time_and_date", "type": "time", "arity": 0, "notation": "(   -- +n1 +n2 +n3 +n4 +n5 +n6)",  "def": "возвращает текущее время и дату"},
-"timestamp": {"name": "timestamp", "type": "time", "arity": 1, "ar_type": "timestamp", "notation": "( ts  -- +n1 +n2 +n3 +n4 +n5 +n6)",  "def": "размещает timestamp в стеке"},
-"to-timestamp": {"name": "to_timestamp", "type": "time", "arity": 1, "ar_type": "timestamp", "notation": "( ph  -- ts)",  "def": "преобразует символьную строку в timestamp"},
-"text-to-unix":  {"name": "text_to_unix", "type": "time", "arity": 1, "ar_type": "string", "notation": "( x -- n )",  "def": "преобразование текста в timestamp"},
-"datatime-from-unix": {"name": "datatime_from_unix", "type": "time", "arity": 1, "ar_type": "number", "notation": "( ts -- dt )",  "def": "преобразование timestamp в datatime"},
-"datatime-to-unix": {"name": "datatime_to_unix", "type": "time", "arity": 1, "ar_type": "number", "notation": "( dt -- ts )",  "def": "преобразование дату/время во временную метку"},
+"TIME&DATE": {"name": "time_and_date", "type": "time", "arity": 0, "notation": "(   -- +n1 +n2 +n3 +n4 +n5 +n6)",  "def": "возвращает текущее время и дату"},
+"TIMESTAMP": {"name": "timestamp", "type": "time", "arity": 1, "ar_type": "timestamp", "notation": "( ts  -- +n1 +n2 +n3 +n4 +n5 +n6)",  "def": "размещает timestamp в стеке"},
+"TO-TIMESTAMP": {"name": "to_timestamp", "type": "time", "arity": 1, "ar_type": "timestamp", "notation": "( ph  -- ts)",  "def": "преобразует символьную строку в timestamp"},
+"TEXT-TO-UNIX":  {"name": "text_to_unix", "type": "time", "arity": 1, "ar_type": "string", "notation": "( x -- n )",  "def": "преобразование текста в timestamp"},
+"DATATIME-FROM-UNIX": {"name": "datatime_from_unix", "type": "time", "arity": 1, "ar_type": "number", "notation": "( ts -- dt )",  "def": "преобразование timestamp в datatime"},
+"DATATIME-TO-UNIX": {"name": "datatime_to_unix", "type": "time", "arity": 1, "ar_type": "number", "notation": "( dt -- ts )",  "def": "преобразование дату/время во временную метку"},
 "MS": {"name": "delay", "type": "time",  "notation": "( t -- )", "def": "задержка времени"},
-"delay": {"name": "delay", "type": "time",  "notation": "( t -- )", "def": "задержка времени"}
+"DELAY": {"name": "delay", "type": "time",  "notation": "( t -- )", "def": "задержка времени"}
 }
 
 

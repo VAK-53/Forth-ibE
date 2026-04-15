@@ -43,35 +43,6 @@ defmodule ForthIbE.Interpreter do
   defp _interpret(["IF" | tail], state) do
     # вначале разбиваем ветвление на части
     {_vc, ds, rs, dict}	= state		                                                     					
-    {intermediate, ["then" | behind_tokens]}  = Enum.split_while(tail, fn s -> s != "then"  end)
-    split  = Enum.split_while(intermediate, fn s -> s != "else"  end)
-    if_state = {[],ds, rs, dict} # персональное состояние для if
-    {map_code, data_stack, return_stack, new_dict } = case split do
-      {if_tokens,[]}                  ->    {if_code, stack, return, if_dict} = _interpret(if_tokens, if_state)
-                                            if_map = %{} |> Map.put(:if, if_code)  # вставляем в словарь только код за if                                  
-                                            {if_map, stack, return, if_dict}
-                                          
-      {if_tokens, ["else" | else_tokens]} ->  {if_code, _stack, _return, if_dict} = _interpret(if_tokens, if_state)
-                                              if_map = %{} |> Map.put(:if, if_code)      # вставляем в словарь код за if
-
-                                              #IO.puts("else tokens: #{inspect(else_tokens)}") 
-                                              else_state = {[],ds, rs, if_dict}
-                                              {else_code, stack, return, else_dict} = _interpret(else_tokens, else_state)
-                                              #IO.puts("else code: #{inspect(else_code)}") 
-                                              
-                                              map = Map.put(if_map, :else, else_code)                     # вставляем в словарь код за else
-                                              {map, stack, return, else_dict}
-      _ ->  raise InterpretError, message: "incorrect if-else-then structure", code: intermediate              
-    end
-    
-    # обрабатываем токены после if ... then ...else
-    {behind_code, data_stack, return_stack, behind_dict} = _interpret(behind_tokens, {[], data_stack, return_stack, new_dict })
-    {[map_code | behind_code], data_stack, return_stack, behind_dict}   
-  end					
-
-  defp _interpret(["IF" | tail], state) do
-    # вначале разбиваем ветвление на части
-    {_vc, ds, rs, dict}	= state		                                                     					
     {intermediate, ["THEN" | behind_tokens]}  = Enum.split_while(tail, fn s -> s != "THEN"  end)
     split  = Enum.split_while(intermediate, fn s -> s != "ELSE"  end)
     if_state = {[],ds, rs, dict} # персональное состояние для if
