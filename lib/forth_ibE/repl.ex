@@ -47,6 +47,8 @@ defmodule ForthIbE.REPL do
                   "division by zero" -> IO.puts("Деление на 0.")
                   "negative root value" ->
                                         IO.puts("Отрицательное подкоренное выражение.")
+                  "there's no word definition" ->
+                                        IO.puts("Отсутствует определение слова #{e.name}.")
                   "there's no declared variable" ->
                                         IO.puts("Отсутствует требуемая переменная #{e.name}.")
                   "there's no need constant" ->

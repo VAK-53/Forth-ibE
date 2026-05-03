@@ -387,7 +387,7 @@ defmodule ForthIbE.Words do
     if Map.has_key?(dictionary, word_name) do
       IO.write("переопределяется '#{word_name}'")
     end
-    dict = add_var(dictionary, word_name, :unknown)
+    dict = add_var(dictionary, word_name, :undefined)
     #IO.inspect(dict)
     {tail, data_stack, return_stack, dict} 
   end
@@ -403,16 +403,23 @@ defmodule ForthIbE.Words do
   def inc_variable(virt_code, [var_name, x | data_stack], return_stack, dictionary) do
 	#IO.puts("inc_var #{var_name} #{x}")
 	case get_var(dictionary, var_name) do
-	  :unknown	-> 	raise ExecuterError, message: "undefined variable", code: virt_code, stack: data_stack, dict: dictionary, name: var_name
+	  :undefined	-> 	raise ExecuterError, message: "undefined variable", code: virt_code, stack: data_stack, dict: dictionary, name: var_name
 	  :error	->	raise ExecuterError, message: "there's no declared variable", code: virt_code, stack: data_stack, dict: dictionary, name: var_name
 	  value		-> 	dict = set_var(dictionary, var_name, value + x) # что будет, если x и value не числа!?	
 					{virt_code, data_stack, return_stack, dict}
 	end
   end
 
+  def get_word(virt_code, [word | data_stack], return_stack, dictionary) do # перенёс на этап интерпретации
+	case get_word(dictionary, word) do
+	  :error    ->  raise ExecuterError, message: "there's no word definition", code: virt_code, stack: data_stack, dict: dictionary, name: word
+	  value	    ->  {virt_code, [value | data_stack], return_stack, dictionary}
+	end   
+  end
+
   def get_variable(virt_code, [var_name | data_stack], return_stack, dictionary) do # перенёс на этап интерпретации
 	case get_var(dictionary, var_name) do
-	  :unknown	->  raise ExecuterError, message: "undefined variable", code: virt_code, stack: data_stack, dict: dictionary, name: var_name
+	  :undefined	->  raise ExecuterError, message: "undefined variable", code: virt_code, stack: data_stack, dict: dictionary, name: var_name
 	  :error    ->  raise ExecuterError, message: "there's no declared variable", code: virt_code, stack: data_stack, dict: dictionary, name: var_name
 	  value	    ->  {virt_code, [value | data_stack], return_stack, dictionary}
 	end   
@@ -796,7 +803,15 @@ defmodule ForthIbE.Words do
     list =  Enum.each(data_stack, fn str ->
                 String.to_atom(str)
     end)
-    {virt_code, [list | data_stack], return_stack, dictionary}
+    {virt_code, list , return_stack, dictionary}
   end
+
+  def to_tuple(virt_code, data_stack, return_stack, dictionary) do
+    list =  Enum.each(data_stack, fn elem -> elem
+    end)
+    tuple = List.to_tuple(list)
+    {virt_code, tuple, return_stack, dictionary}
+  end
+
 end
 

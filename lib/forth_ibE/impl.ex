@@ -78,7 +78,7 @@ defmodule ForthIbE.Impl.Common do
 
       defp eval(words, state) do
         try do
-          new_state = words |> parse |> interpret(state) |> ForthIbE.Executer.evaluate
+          new_state = words |> parse |> interpret(state) |> ForthIbE.Executer.evaluate # new_state = ???убрать
         rescue
           e in ExecuterError ->
             case e.message do
@@ -92,8 +92,8 @@ defmodule ForthIbE.Impl.Common do
               "not number"          ->  Logger.info("Значение \"#{e.name}\" не является числом.")             
               "an empty stack"      ->  Logger.info("Cтек пуст.")
             end
-              Logger.info("Стек: #{inspect(e.stack)}")
-              Logger.info("Код: #{inspect(e.code)}")
+            Logger.info("Стек: #{inspect(e.stack)}")
+            Logger.info("Код: #{inspect(e.code)}")
             :error
         end
       end

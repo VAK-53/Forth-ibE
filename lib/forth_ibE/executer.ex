@@ -35,7 +35,7 @@ defmodule ForthIbE.Executer do
     #IO.inspect(data_stack)
 	case get_value(dictionary, first) do
       :unknown              ->  next({tail, [first | data_stack], return_stack, dictionary})
-      {:var, :unknown}      ->  next({tail, [first | data_stack], return_stack, dictionary})
+      {:var, :undefined}    ->  next({tail, [first | data_stack], return_stack, dictionary})
       {:var, _value}        ->  next({tail, [first | data_stack], return_stack, dictionary})
       # работа по расширению кода выполняется здесь ради рекурсии! 
 	  {:words, word_code}   ->  virt_code = word_code ++ tail   # для рекурсии

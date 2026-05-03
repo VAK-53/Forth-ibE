@@ -26,7 +26,7 @@ defmodule ForthIbE.Dictionary do
     end
   end
 
-  def exist?(dict, word_name) do
+  defp exist?(dict, word_name) do
     Map.has_key?(dict, word_name) 
   end
 
@@ -53,10 +53,19 @@ defmodule ForthIbE.Dictionary do
 	end
   end
 
-  def get_var(dict, word_name) do
+  def get_word(dict, word_name) do  # возвращает строку
     #IO.puts("in get_var #{word_name}")
 	case exist?(dict, word_name) do
-      true	-> 	{:var, value} = Map.get(dict, word_name ) 
+      true	-> 	{:words, code} = Map.get(dict, word_name ) 
+    			code
+	  false -> :error
+	end
+  end
+
+  def get_var(dict, var_name) do
+    #IO.puts("in get_var #{var_name}")
+	case exist?(dict, var_name) do
+      true	-> 	{:var, value} = Map.get(dict, var_name ) 
     			value
 	  false -> :error
 	end

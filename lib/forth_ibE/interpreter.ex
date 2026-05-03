@@ -39,7 +39,8 @@ defmodule ForthIbE.Interpreter do
 
   #-------------------------
   # ( if ... then ...else )
-  #-------------------------
+  #-------------------------			
+
   defp _interpret(["IF" | tail], state) do
     # вначале разбиваем ветвление на части
     {_vc, ds, rs, dict}	= state		                                                     					
@@ -74,7 +75,7 @@ defmodule ForthIbE.Interpreter do
   #-------------------------
   defp _interpret(["VARIABLE", var_name | tail],  state) do 
     {virt_code, data_stack, return_stack, dictionary} = state
-	new_dict = add_var(dictionary, var_name, :unknown)
+	new_dict = add_var(dictionary, var_name, :undefined)
 	_interpret(tail,  {virt_code, data_stack, return_stack, new_dict}) 
   end
 
@@ -123,7 +124,7 @@ defmodule ForthIbE.Interpreter do
 	  :unknown  ->  found = get_value(dictionary, token)
                     case found do
                       # определение
-                      {:words, _code}  ->    # делается простая подстановка, расширяется в executer
+                      {:words, _code}  ->   # делается простая подстановка, расширяется в executer
                                             new_state = _interpret(tail, state)    
                                             {virt_code, data_stack, return_stack, dictionary} = new_state
                                             {[token | virt_code], data_stack, return_stack, dictionary}

@@ -22,7 +22,7 @@ defmodule ForthIbE.Table do
     end
   end
 
-  def get_at_om(table, atom) do          # !!!!
+  def get_at_om(table, atom) do          # !!!!Удалить
     #IO.puts("get in table " <> atom)
     case Map.has_key?(table, atom) do
       true  -> Map.get(table, atom) 
